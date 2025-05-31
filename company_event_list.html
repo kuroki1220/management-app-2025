@@ -7,7 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0; /* ヘッダーを考慮し、bodyのmarginをリセット */
+            padding: 20px; /* ヘッダーとの間隔 */
         }
         h1 { /* このH1はページ固有のものなので残します */
             color: #333;
@@ -48,18 +49,6 @@
             color: #666;
         }
         /* back-to-home スタイルは共通ヘッダーで役割を担うため削除 */
-        /* .back-to-home {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .back-to-home:hover {
-            background-color: #5a6268;
-        } */
     </style>
 </head>
 <body>
@@ -68,7 +57,7 @@
         <div id="companyEventList">
             <p id="noEventsMessage">まだ企業やイベントは登録されていません。</p>
         </div>
-        </main>
+    </main>
 
     <script>
         // 共通ヘッダーを読み込むスクリプト
@@ -82,10 +71,8 @@
             const companyEventListDiv = document.getElementById('companyEventList');
             const noEventsMessage = document.getElementById('noEventsMessage');
             
-            // script.jsからイベントデータを取得 (globalなevents配列を利用)
-            // もしくは、再度localStorageからロードする関数を定義
             function loadEventsForDisplay() {
-                const storedEvents = localStorage.getItem('events');
+                const storedEvents = localStorage.getItem('events'); // キーは 'events'
                 return storedEvents ? JSON.parse(storedEvents) : [];
             }
 

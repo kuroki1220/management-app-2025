@@ -7,7 +7,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0; /* ヘッダーを考慮し、bodyのmarginをリセット */
+            padding: 20px; /* ヘッダーとの間隔 */
+        }
+        h1 {
+            color: #333;
         }
         .event-item {
             background-color: #f9f9f9;
@@ -144,20 +148,16 @@
         // --- データ操作関数 ---
         function getEventsFromStorage() {
             const eventsString = localStorage.getItem('events');
-            // console.log("localStorageから読み込んだ生の文字列:", eventsString);
             const events = eventsString ? JSON.parse(eventsString) : [];
-            // console.log("localStorageからパースしたイベント配列:", JSON.parse(JSON.stringify(events))); // ログ用にディープコピー
             return events;
         }
 
         function saveEventsToStorage(events) {
-            console.log("localStorageへ保存するイベント配列:", JSON.parse(JSON.stringify(events))); // ログ用にディープコピー
             localStorage.setItem('events', JSON.stringify(events));
         }
 
         // --- イベント描画関数 ---
         function renderEvents() {
-            console.log("renderEvents が呼ばれました。");
             eventListDiv.innerHTML = '';
             const events = getEventsFromStorage();
 
@@ -169,12 +169,10 @@
             events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
             events.forEach(event => {
-                // event オブジェクトと event.id の存在をチェック
                 if (!event || typeof event.id === 'undefined') {
                     console.warn("描画スキップ: 不正なイベントデータまたはIDがありません。", event);
-                    return; // このイベントの描画をスキップ
+                    return;
                 }
-                // console.log(`描画中のイベント: ${event.name} (ID: ${event.id})`);
 
                 const eventItem = document.createElement('div');
                 eventItem.classList.add('event-item');
@@ -197,7 +195,6 @@
                     const eventUrlEl = document.createElement('p');
                     const urlLink = document.createElement('a');
                     let formattedUrl = event.url;
-                    // URLが空文字列でないことも確認
                     if (formattedUrl && typeof formattedUrl === 'string' && !/^https?:\/\//i.test(formattedUrl)) {
                         formattedUrl = 'http://' + formattedUrl;
                     }
@@ -213,8 +210,6 @@
                 const editButton = document.createElement('button');
                 editButton.textContent = '変更';
                 editButton.addEventListener('click', function() {
-                    // この無名関数が呼ばれた時点での event.id を使う (クロージャにより保持される)
-                    console.log(`変更ボタンクリック: イベントID '${event.id}'`);
                     openEditModal(event.id);
                 });
                 eventItem.appendChild(editButton);
@@ -224,7 +219,6 @@
                 deleteButton.textContent = '削除';
                 deleteButton.classList.add('delete');
                 deleteButton.addEventListener('click', function() {
-                    console.log(`削除ボタンクリック: イベントID '${event.id}'`);
                     deleteEvent(event.id);
                 });
                 eventItem.appendChild(deleteButton);
@@ -235,7 +229,6 @@
 
         // --- 削除処理 ---
         function deleteEvent(idToDelete) {
-            console.log(`deleteEvent 呼び出し: 削除対象ID '${idToDelete}' (型: ${typeof idToDelete})`);
             if (typeof idToDelete === 'undefined') {
                 console.error("削除エラー: IDが undefined です。");
                 return;
@@ -246,14 +239,11 @@
                 
                 // IDを文字列として比較
                 const updatedEvents = events.filter(event => {
-                    // console.log(`フィルタリング比較: event.id '${event.id}' (型: ${typeof event.id}) と idToDelete '${idToDelete}' (型: ${typeof idToDelete})`);
                     return String(event.id) !== String(idToDelete);
                 });
 
                 if (updatedEvents.length === initialLength && initialLength > 0) {
                      console.warn(`削除フィルタでイベントが減りませんでした。ID '${idToDelete}' が見つからなかった可能性があります。`);
-                } else {
-                    console.log(`イベント削除成功。元の件数: ${initialLength}, 新しい件数: ${updatedEvents.length}`);
                 }
 
                 saveEventsToStorage(updatedEvents);
@@ -263,7 +253,6 @@
 
         // --- 変更処理 (モーダル表示) ---
         function openEditModal(idToEdit) {
-            console.log(`openEditModal 呼び出し: 編集対象ID '${idToEdit}' (型: ${typeof idToEdit})`);
             if (typeof idToEdit === 'undefined') {
                 console.error("編集モーダル表示エラー: IDが undefined です。");
                 return;
@@ -271,8 +260,6 @@
             const events = getEventsFromStorage();
             // IDを文字列として比較
             const eventToEdit = events.find(event => String(event.id) === String(idToEdit));
-
-            console.log("編集対象として見つかったイベント:", eventToEdit ? JSON.parse(JSON.stringify(eventToEdit)) : "見つかりません");
 
             if (eventToEdit) {
                 document.getElementById('editEventId').value = eventToEdit.id; // id は hidden input に保存
@@ -295,7 +282,6 @@
         editEventForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const idToSave = document.getElementById('editEventId').value; // hidden input から ID を取得
-            console.log(`変更保存試行: イベントID '${idToSave}' (型: ${typeof idToSave})`);
 
             if (!idToSave) { // IDが空やnullの場合
                 console.error("保存エラー: editEventId が空です。");
@@ -307,8 +293,6 @@
             // IDを文字列として比較
             const eventIndex = events.findIndex(event => String(event.id) === String(idToSave));
 
-            console.log(`保存対象のイベントインデックス: ${eventIndex}`);
-
             if (eventIndex > -1) {
                 // 既存のイベントオブジェクトのプロパティを更新
                 events[eventIndex].name = document.getElementById('editEventName').value;
@@ -317,7 +301,6 @@
                 events[eventIndex].details = document.getElementById('editEventDetails').value;
                 // events[eventIndex].id は変更しない
 
-                console.log("更新後のイベントデータ:", JSON.parse(JSON.stringify(events[eventIndex])));
                 saveEventsToStorage(events);
                 renderEvents();
                 closeEditModal();

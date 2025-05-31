@@ -7,7 +7,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0; /* ヘッダーを考慮し、bodyのmarginをリセット */
+            padding: 20px; /* ヘッダーとの間隔 */
+        }
+        h2 {
+            color: #333;
         }
         form div {
             margin-bottom: 10px;
@@ -39,26 +43,21 @@
         }
 
         #tagButtons {
-            /* flex-direction: column; /* これがあると縦並びになるので、横並びさせたい場合は削除または調整 */
             display: flex; /* 横並びにするために追加 */
             flex-wrap: wrap;
             gap: 9px;
-            /* width: 600px; /* 必要に応じて調整 */
             margin-bottom: 5px; /* テキストエリアとの間隔調整 */
         }   
 
         .tag-button { /* タグボタン固有のスタイル */
             padding: 8px 12px;
-            /* margin-top: 5px; /* display:flex と gap で調整するので不要な場合あり */
             background-color: #6c757d;
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 14px;
-            /* text-align: left; /* 中央揃えの方がボタンらしい場合は center */
             cursor: pointer;
             transition: background-color 0.2s ease;
-            /* width: 180px; /* 固定幅が必要な場合。可変にしたい場合は削除 */
         }
 
         .tag-button:hover {
@@ -66,7 +65,6 @@
         }
 
         /* #eventList, .event-item 関連のスタイルは test.html では使用されていないため、削除しても影響ありません */
-        /* ただし、何らかの理由で残している場合はそのままでも構いません */
         #eventList {
             margin-top: 30px;
             border-top: 1px solid #eee;
@@ -112,11 +110,11 @@
             <div>
                 <label for="eventDetails">詳細:</label>
                 <div id="tagButtons">
-                    <button type="button" class="tag-button" data-tag="[企業説明会]">[企業説明会]</button>
-                    <button type="button" class="tag-button" data-tag="[インターン]">[インターン]</button>
-                    <button type="button" class="tag-button" data-tag="[面接]">[面接]</button>
-                    <button type="button" class="tag-button" data-tag="[web]">[web]</button>
-                    <button type="button" class="tag-button" data-tag="[対面]">[対面]</button>
+                    <button type="button" class="tag-button" data-tag="[企業説明会]" data-event-type="briefing">[企業説明会]</button>
+                    <button type="button" class="tag-button" data-tag="[インターン]" data-event-type="other">[インターン]</button>
+                    <button type="button" class="tag-button" data-tag="[面接]" data-event-type="interview">[面接]</button>
+                    <button type="button" class="tag-button" data-tag="[Web試験]" data-event-type="deadline">[Web試験]</button>
+                    <button type="button" class="tag-button" data-tag="[その他]" data-event-type="other">[その他]</button>
                 </div>
                 <textarea id="eventDetails" name="eventDetails" rows="4"></textarea>
             </div>
@@ -142,7 +140,6 @@
 
         // タグボタンのコンテナが存在し、かつ詳細テキストエリアが存在する場合のみ処理
         if (tagButtonsContainer && eventDetailsTextarea) {
-            // タグボタン自体へのイベントリスナー設定 (イベントデリゲーションではなく直接設定)
             const buttons = tagButtonsContainer.querySelectorAll('.tag-button');
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
