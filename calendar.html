@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>就活カレンダー・編集</title>
+    <style>
+        /* CSS: スタイリング */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column; /* ヘッダーのために追加 */
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 0; /* ヘッダーを考慮し、bodyのpaddingをリセット */
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 90%;
+            max-width: 600px; /* 1日ごとの表示に合わせて幅を調整 */
+            box-sizing: border-box;
+            margin-top: 20px; /* ヘッダーとの間隔 */
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .calendar-header button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .calendar-header button:hover {
+            background-color: #0056b3;
+        }
+
+        .calendar-header h3 {
+            margin: 0;
+            color: #4a6572;
+            font-size: 1.8em;
+        }
+
+        /* 1日ごとのリスト形式カレンダーのスタイル */
+        #calendar {
+            display: block; /* 各日付エントリが縦に並ぶように */
+            margin-top: 15px; /* 必要であれば少しスペースを設ける */
+        }
+
+        .day-entry {
+            background-color: #ffffff;
+            border: 1px solid #e0e6e9;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .day-entry:hover {
+            transform: translateY(-2px);
+        }
+
+        .day-entry.today {
+            border: 2px solid #007bff;
+            background-color: #eef5ff;
+        }
+
+        .day-header {
+            display: flex;
+            align-items: baseline; /* 垂直方向の配置を調整 */
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #e0e6e9;
+            padding-bottom: 8px;
+        }
+
+        .day-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin-right: 8px; /* 日付と曜日の間隔を調整 */
+        }
+
+        .day-week {
+            font-size: 1.1em;
+            color: #666;
+            flex-grow: 1; /* 曜日が残りのスペースを占めるように */
+        }
+        /* 曜日ごとの色分け */
+        .day-week.sunday { color: #dc3545; } /* 日曜日を赤 */
+        .day-week.saturday { color: #007bff; } /* 土曜日を青 */
+
+
+        .event-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .event-list li {
+            background-color: #d1ecf1; /* デフォルトの色 */
+            color: #0c5460; /* デフォルトの色 */
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            white-space: normal; /* 折り返しを許可 */
+            overflow: hidden;
+            text-overflow: ellipsis; /* 必要であれば */
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .event-list li:hover {
+            background-color: #b8dae0;
+        }
+        /* イベントの種類による色分け */
+        .event-list li.interview { background-color: #ffeeba; color: #856404; }
+        .event-list li.briefing { background-color: #c3e6cb; color: #155724; }
+        .event-list li.deadline { background-color: #f8d7da; color: #721c24; }
+        .event-list li.other { background-color: #e2e3e5; color: #383d41; }
+
+
+        /* モーダルウィンドウのスタイリング */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group select,
+        .form-group textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="date"]:focus,
+        .form-group input[type="time"]:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* 編集モーダルのボタン */
+        #editFormButtons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        #editFormButtons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #editFormButtons #saveEditButton {
+            background-color: #007bff;
+            color: white;
+        }
+        #editFormButtons #saveEditButton:hover {
+            background-color: #0056b3;
+        }
+        #editFormButtons #deleteEventButton {
+            background-color: #dc3545; /* 赤色 */
+            color: white;
+        }
+        #editFormButtons #deleteEventButton:hover {
+            background-color: #c82333;
+        }
+
+        /* ページ遷移リンク */
+        /* ヘッダーに統合するため削除 */
+        /* .page-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .page-links a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .page-links a:hover {
+            background-color: #5a6268;
+        } */
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div class="container">
+        <h2>就活カレンダー</h2>
+        <div class="calendar-header">
+            <button id="prevMonth">前の月</button>
+            <h3 id="currentMonthYear"></h3>
+            <button id="nextMonth">次の月</button>
+        </div>
+        <div id="calendar">
+        </div>
+        </div>
+
+    <div id="editEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>予定の編集</h3>
+            <form id="editEventForm">
+                <input type="hidden" id="editEventId">
+                <div class="form-group">
+                    <label for="editEventName">会社名 / イベント名:</label>
+                    <input type="text" id="editEventName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventDate">日付:</label>
+                    <input type="date" id="editEventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventTime">時間 (任意):</label>
+                    <input type="time" id="editEventTime">
+                </div>
+                <div class="form-group">
+                    <label for="editEventType">種類:</label>
+                    <select id="editEventType" required>
+                        <option value="interview">面接</option>
+                        <option value="briefing">説明会</option>
+                        <option value="deadline">締切</option>
+                        <option value="other">その他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editEventDetails">詳細:</label>
+                    <textarea id="editEventDetails" rows="4"></textarea>
+                </div>
+                <div id="editFormButtons">
+                    <button type="submit" id="saveEditButton">変更を保存</button>
+                    <button type="button" id="deleteEventButton">予定を削除</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 共通ヘッダーを読み込むスクリプト
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const calendarContainer = document.getElementById('calendar');
+            const currentMonthYearDisplay = document.getElementById('currentMonthYear');
+            const prevMonthBtn = document.getElementById('prevMonth');
+            const nextMonthBtn = document.getElementById('nextMonth');
+
+            const editEventModal = document.getElementById('editEventModal');
+            const editCloseButton = editEventModal.querySelector('.close-button');
+            const editEventForm = document.getElementById('editEventForm');
+            const editEventIdInput = document.getElementById('editEventId');
+            const editEventNameInput = document.getElementById('editEventName');
+            const editEventDateInput = document.getElementById('editEventDate');
+            const editEventTimeInput = document.getElementById('editEventTime');
+            const editEventTypeSelect = document.getElementById('editEventType');
+            const editEventDetailsInput = document.getElementById('editEventDetails');
+            const saveEditButton = document.getElementById('saveEditButton');
+            const deleteEventButton = document.getElementById('deleteEventButton');
+
+            // localStorageからすべてのイベントを読み込む
+            // test.htmlと同じキー 'events' を使用
+            let allEvents = JSON.parse(localStorage.getItem('events')) || [];
+
+            // カレンダー表示用に日付をキーとするオブジェクト形式に変換
+            let eventsByDate = {};
+            function rebuildEventsByDate() {
+                eventsByDate = {};
+                allEvents.forEach(event => {
+                    if (!eventsByDate[event.date]) {
+                        eventsByDate[event.date] = [];
+                    }
+                    eventsByDate[event.date].push(event);
+                });
+            }
+            rebuildEventsByDate(); // 初期構築
+
+            // カレンダーの現在表示月
+            let currentDate = new Date(); // 今日の日付を基準に開始
+
+            // データをlocalStorageに保存し、eventsByDateを再構築する関数
+            function saveAndRebuildEvents() {
+                localStorage.setItem('events', JSON.stringify(allEvents)); // キーを 'events' に統一
+                rebuildEventsByDate(); // eventsByDateを再構築
+            }
+
+            // カレンダーを描画する関数
+            function renderCalendar() {
+                calendarContainer.innerHTML = ''; // 既存のカレンダー内容をクリア
+
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth(); // 0-11
+
+                currentMonthYearDisplay.textContent = `${year}年 ${month + 1}月`;
+
+                // 月の最終日
+                const lastDayOfMonth = new Date(year, month + 1, 0); // その月の最終日
+                const totalDays = lastDayOfMonth.getDate(); // 月の総日数
+
+                // 今日
+                const today = new Date();
+                const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+                const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+
+                for (let day = 1; day <= totalDays; day++) {
+                    const currentDayDate = new Date(year, month, day);
+                    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const dayOfWeekIndex = currentDayDate.getDay(); // 0:日, 1:月, ... 6:土
+                    const dayOfWeekName = dayNames[dayOfWeekIndex];
+
+                    const dayEntryDiv = document.createElement('div');
+                    dayEntryDiv.classList.add('day-entry');
+                    dayEntryDiv.dataset.date = dateString;
+
+                    // 今日の日付に特別なスタイルを適用
+                    if (dateString === todayString) {
+                        dayEntryDiv.classList.add('today');
+                    }
+
+                    const dayHeaderDiv = document.createElement('div');
+                    dayHeaderDiv.classList.add('day-header');
+
+                    const dayNumberSpan = document.createElement('span');
+                    dayNumberSpan.classList.add('day-number');
+                    dayNumberSpan.textContent = day;
+
+                    const dayWeekSpan = document.createElement('span');
+                    dayWeekSpan.classList.add('day-week');
+                    dayWeekSpan.textContent = `(${dayOfWeekName})`;
+
+                    // 曜日ごとの色分けクラスを追加
+                    if (dayOfWeekIndex === 0) { // 日曜日
+                        dayWeekSpan.classList.add('sunday');
+                    } else if (dayOfWeekIndex === 6) { // 土曜日
+                        dayWeekSpan.classList.add('saturday');
+                    }
+
+                    dayHeaderDiv.appendChild(dayNumberSpan);
+                    dayHeaderDiv.appendChild(dayWeekSpan);
+                    dayEntryDiv.appendChild(dayHeaderDiv);
+
+                    // その日の予定を表示
+                    if (eventsByDate[dateString] && eventsByDate[dateString].length > 0) {
+                        const eventListUl = document.createElement('ul');
+                        eventListUl.classList.add('event-list');
+
+                        // 時間順にソートして表示
+                        eventsByDate[dateString].sort((a, b) => {
+                            const timeA = a.time || '';
+                            const timeB = b.time || '';
+                            return timeA.localeCompare(timeB);
+                        });
+
+                        eventsByDate[dateString].forEach(event => {
+                            const eventLi = document.createElement('li');
+                            // typeプロパティがあればクラスを追加
+                            // test.htmlのイベント登録時にtypeが設定されないため、detailsの内容から推定するか、
+                            // script.jsでtypeを追加する変更が必要。今回はscript.jsでtypeを追加します。
+                            // デフォルトは 'other' として、既存の 'interview', 'briefing', 'deadline' に対応。
+                            const eventTypeClass = event.type || 'other'; // typeプロパティがなければ 'other'
+                            eventLi.classList.add(eventTypeClass);
+
+                            // 時間と名前の表示
+                            eventLi.textContent = `${event.time ? event.time + ' ' : ''}${event.name}`;
+                            eventLi.dataset.eventId = event.id; // 編集のためにIDをセット
+                            eventLi.addEventListener('click', (e) => {
+                                e.stopPropagation(); // イベントバブリング防止
+                                openEditModal(event.id);
+                            });
+                            eventListUl.appendChild(eventLi);
+                        });
+                        dayEntryDiv.appendChild(eventListUl);
+                    } else {
+                        const noEventP = document.createElement('p');
+                        noEventP.textContent = '予定なし';
+                        noEventP.style.fontSize = '0.9em';
+                        noEventP.style.color = '#999';
+                        dayEntryDiv.appendChild(noEventP);
+                    }
+
+                    calendarContainer.appendChild(dayEntryDiv);
+                }
+            }
+
+            // 編集モーダルを開く関数
+            function openEditModal(eventId) {
+                // IDは文字列なので文字列比較
+                const eventToEdit = allEvents.find(event => String(event.id) === String(eventId));
+                if (eventToEdit) {
+                    editEventIdInput.value = eventToEdit.id;
+                    editEventNameInput.value = eventToEdit.name;
+                    editEventDateInput.value = eventToEdit.date;
+                    // timeプロパティはscript.jsで登録されていないが、calendar.htmlのモーダルにはinputがあるため、
+                    // 存在しない場合は空文字列を設定し、保存時に更新できるようにする。
+                    editEventTimeInput.value = eventToEdit.time || '';
+                    // typeプロパティがない場合も考慮
+                    editEventTypeSelect.value = eventToEdit.type || 'other';
+                    editEventDetailsInput.value = eventToEdit.details || '';
+                    editEventModal.style.display = 'flex';
+                } else {
+                    console.error('指定されたIDのイベントが見つかりません:', eventId);
+                }
+            }
+
+            // 編集モーダルを閉じる関数
+            function closeEditModal() {
+                editEventModal.style.display = 'none';
+            }
+
+            // --- イベントリスナー ---
+            prevMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+            editCloseButton.addEventListener('click', closeEditModal);
+
+            window.addEventListener('click', (event) => {
+                if (event.target === editEventModal) {
+                    closeEditModal();
+                }
+            });
+
+            editEventForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const eventId = editEventIdInput.value; // 文字列ID
+                const newName = editEventNameInput.value.trim();
+                const newDate = editEventDateInput.value;
+                const newTime = editEventTimeInput.value;
+                const newType = editEventTypeSelect.value;
+                const newDetails = editEventDetailsInput.value.trim();
+
+                if (!newName || !newDate) {
+                    alert('会社名/イベント名と日付は必須です。');
+                    return;
+                }
+
+                // IDは文字列なので文字列比較
+                const eventIndex = allEvents.findIndex(event => String(event.id) === String(eventId));
+                if (eventIndex !== -1) {
+                    allEvents[eventIndex].name = newName;
+                    allEvents[eventIndex].date = newDate;
+                    allEvents[eventIndex].time = newTime;
+                    allEvents[eventIndex].type = newType;
+                    allEvents[eventIndex].details = newDetails;
+
+                    saveAndRebuildEvents();
+                    closeEditModal();
+                    renderCalendar();
+                } else {
+                    console.error('編集対象のイベントが見つかりません。');
+                }
+            });
+
+            deleteEventButton.addEventListener('click', () => {
+                if (!confirm('本当にこの予定を削除しますか？')) {
+                    return;
+                }
+                const eventIdToDelete = editEventIdInput.value; // 文字列ID
+                const initialLength = allEvents.length;
+                // IDは文字列なので文字列比較
+                allEvents = allEvents.filter(event => String(event.id) !== String(eventIdToDelete));
+
+                if (allEvents.length < initialLength) {
+                    saveAndRebuildEvents();
+                    closeEditModal();
+                    renderCalendar();
+                } else {
+                    console.error('削除対象のイベントが見つかりません。');
+                }
+            });
+
+            // --- 初期化 ---
+            renderCalendar();
+        });
+    </script>
+</body>
+</html>
