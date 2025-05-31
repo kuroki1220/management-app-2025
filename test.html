@@ -20,6 +20,7 @@
         }
         input[type="text"],
         input[type="date"],
+        input[type="url"], /* URL入力用にスタイルを追加 */
         textarea {
             width: 300px;
             padding: 8px;
@@ -56,6 +57,13 @@
         .event-item p {
             margin-bottom: 5px;
         }
+        .event-item a { /* URLのリンクスタイル */
+            color: #007bff;
+            text-decoration: none;
+        }
+        .event-item a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -63,7 +71,6 @@
         <h1>就活管理アプリ</h1>
     </header>
     <main>
-        <p>アプリ開発頑張ろうね!</p>
 
         <h2>予定の登録</h2>
         <form id="eventForm">
@@ -74,6 +81,10 @@
             <div>
                 <label for="eventDate">日付:</label>
                 <input type="date" id="eventDate" name="eventDate" required>
+            </div>
+            <div>
+                <label for="eventUrl">企業URL (任意):</label>
+                <input type="url" id="eventUrl" name="eventUrl" placeholder="例: https://www.example.com">
             </div>
             <div>
                 <label for="eventDetails">詳細:</label>

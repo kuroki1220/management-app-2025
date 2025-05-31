@@ -2,38 +2,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventForm = document.getElementById('eventForm');
     const eventNameInput = document.getElementById('eventName');
     const eventDateInput = document.getElementById('eventDate');
+    const eventUrlInput = document.getElementById('eventUrl');
     const eventDetailsInput = document.getElementById('eventDetails');
     const eventListDiv = document.getElementById('eventList');
 
-    // 既存の予定を保持する配列 (今回は簡易的にメモリ上に保持)
     let events = [];
 
-    // フォームが送信されたときの処理
+    function loadEvents() {
+        const storedEvents = localStorage.getItem('events');
+        if (storedEvents) {
+            events = JSON.parse(storedEvents);
+        }
+    }
+
+    // localStorageにデータの保存
+    function saveEvents() {
+        localStorage.setItem('events', JSON.stringify(events));
+    }
+
     eventForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // フォームのデフォルト送信をキャンセル
+        event.preventDefault();
 
         const eventName = eventNameInput.value;
         const eventDate = eventDateInput.value;
+        const eventUrl = eventUrlInput.value;
         const eventDetails = eventDetailsInput.value;
 
         if (eventName && eventDate) {
             const newEvent = {
                 name: eventName,
                 date: eventDate,
+                url: eventUrl,
                 details: eventDetails
             };
 
-            events.push(newEvent); // 新しい予定を配列に追加
-            renderEvents(); // 予定リストを再描画
-            clearForm(); // フォームをクリア
+            events.push(newEvent);
+            saveEvents(); // データを保存
+            renderEvents();
+            clearForm();
         } else {
             alert('会社名/イベント名と日付は必須です。');
         }
     });
 
-    // 予定リストを表示する関数
     function renderEvents() {
-        // まず既存のリストをクリア
         eventListDiv.innerHTML = '';
 
         if (events.length === 0) {
@@ -41,12 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 日付順にソート (時系列順)
         events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         events.forEach((event, index) => {
             const eventItem = document.createElement('div');
-            eventItem.classList.add('event-item'); // スタイルを適用するためのクラス
+            eventItem.classList.add('event-item');
 
             const eventNameEl = document.createElement('h3');
             eventNameEl.textContent = event.name;
@@ -55,23 +66,41 @@ document.addEventListener('DOMContentLoaded', () => {
             eventDateEl.textContent = `日付: ${event.date}`;
 
             const eventDetailsEl = document.createElement('p');
-            eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`; // 詳細がなければ「なし」と表示
+            eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`;
 
             eventItem.appendChild(eventNameEl);
             eventItem.appendChild(eventDateEl);
-            eventItem.appendChild(eventDetailsEl);
 
+            if (event.url) {
+                const eventUrlEl = document.createElement('p');
+                const urlLink = document.createElement('a');
+                // URLの形式をチェックし、http://またはhttps://が付いていなければ追加
+                let formattedUrl = event.url;
+                if (!/^https?:\/\//i.test(formattedUrl)) {
+                    formattedUrl = 'http://' + formattedUrl; 
+                }
+                urlLink.href = formattedUrl;
+                urlLink.textContent = '企業ホームページへアクセス'; 
+                urlLink.target = '_blank';
+                urlLink.rel = 'noopener noreferrer';
+                eventUrlEl.appendChild(urlLink);
+                eventItem.appendChild(eventUrlEl); 
+            }
+            
+            eventItem.appendChild(eventDetailsEl); 
+            
             eventListDiv.appendChild(eventItem);
         });
     }
 
-    // フォームをクリアする関数
     function clearForm() {
         eventNameInput.value = '';
         eventDateInput.value = '';
+        eventUrlInput.value = '';
         eventDetailsInput.value = '';
     }
 
-    // ページ読み込み時に一度予定をレンダリング (最初は空なので「まだ予定は登録されていません」が表示される)
+    
+    loadEvents();
     renderEvents();
 });
