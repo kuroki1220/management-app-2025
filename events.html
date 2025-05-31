@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登録された予定一覧</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .event-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .event-item h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .event-item p {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>登録された予定一覧</h1>
+    <div id="eventList">
+        <p>予定を読み込み中...</p>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const eventListDiv = document.getElementById('eventList');
+
+    function renderEvents(events) {
+        eventListDiv.innerHTML = '';
+
+        if (events.length === 0) {
+            eventListDiv.innerHTML = '<p>まだ予定は登録されていません。</p>';
+            return;
+        }
+
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        events.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.classList.add('event-item');
+
+            const eventNameEl = document.createElement('h3');
+            eventNameEl.textContent = event.name;
+
+            const eventDateEl = document.createElement('p');
+            eventDateEl.textContent = `日付: ${event.date}`;
+
+            const eventDetailsEl = document.createElement('p');
+            eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`;
+
+            eventItem.appendChild(eventNameEl);
+            eventItem.appendChild(eventDateEl);
+            eventItem.appendChild(eventDetailsEl);
+
+            eventListDiv.appendChild(eventItem);
+        });
+    }
+
+    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+    renderEvents(storedEvents);
+});
+</script>
+
+</body>
+</html>
