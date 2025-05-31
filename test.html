@@ -37,7 +37,33 @@
         button:hover {
             background-color: #0056b3;
         }
-        #eventList { /* このセクションは今後events.htmlに移行すると良いかもしれません */
+
+        #tagButtons {
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 9px;
+            width: 600px;
+        }  
+
+        .tag-button {
+            padding: 8px 12px;
+            margin-top: 5px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 180px;
+        }
+
+        .tag-button:hover {
+            background-color: #5a6268;
+        }
+
+        #eventList {
             margin-top: 30px;
             border-top: 1px solid #eee;
             padding-top: 20px;
@@ -56,7 +82,7 @@
         .event-item p {
             margin-bottom: 5px;
         }
-        .margin-top { /* このスタイルは共通ヘッダーのボタンと競合しないように削除または調整 */
+        .margin-top {
             margin-top: 10px;
         }
     </style>
@@ -77,8 +103,16 @@
                 <label for="eventUrl">企業URL (任意):</label>
                 <input type="url" id="eventUrl" name="eventUrl" placeholder="例: https://www.example.com">
             </div>
+
             <div>
                 <label for="eventDetails">詳細:</label>
+                <div id="tagButtons">
+                    <button type="button" class="tag-button" data-tag="[企業説明会]">企業説明会</button>
+                    <button type="button" class="tag-button" data-tag="[インターン]">インターン</button>
+                    <button type="button" class="tag-button" data-tag="[面接]">面接</button>
+                    <button type="button" class="tag-button" data-tag="[web]">web</button>
+                    <button type="button" class="tag-button" data-tag="[対面]">対面</button>
+                </div>
                 <textarea id="eventDetails" name="eventDetails" rows="4"></textarea>
             </div>
             <button type="submit">予定を登録</button>
@@ -86,7 +120,6 @@
         </main>
 
     <script>
-        // 共通ヘッダーを読み込むスクリプト
         fetch('header.html')
             .then(response => response.text())
             .then(data => {

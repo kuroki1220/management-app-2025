@@ -5,7 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventDateInput = document.getElementById('eventDate');
     const eventUrlInput = document.getElementById('eventUrl');
     const eventDetailsInput = document.getElementById('eventDetails');
-    // const eventListDiv = document.getElementById('eventList'); // test.htmlから削除されたため、ここも削除
+    // const eventListDiv = document.getElementById('eventList');
+    const tagButtons = document.querySelectorAll('.tag-button');
+
+    tagButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tag = button.getAttribute('data-tag');
+            if (!eventDetailsInput.value.includes(tag)) {
+                eventDetailsInput.value = tag + ' ' + eventDetailsInput.value;
+            }
+        });
+    });
 
     eventForm.addEventListener('submit', (e) => {
         e.preventDefault();
