@@ -3,15 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>タイトル</title>
-    
+    <title>就活管理アプリ</title>
+    <style>
+        /* 簡単なスタイルを追加して見やすくします */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form div {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #eventList {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .event-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .event-item h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .event-item p {
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>WeHello wordl!</h1>
+        <h1>就活管理アプリ</h1>
     </header>
     <main>
         <p>アプリ開発頑張ろうね!</p>
+
+        <h2>予定の登録</h2>
+        <form id="eventForm">
+            <div>
+                <label for="eventName">会社名 / イベント名:</label>
+                <input type="text" id="eventName" name="eventName" required>
+            </div>
+            <div>
+                <label for="eventDate">日付:</label>
+                <input type="date" id="eventDate" name="eventDate" required>
+            </div>
+            <div>
+                <label for="eventDetails">詳細:</label>
+                <textarea id="eventDetails" name="eventDetails" rows="4"></textarea>
+            </div>
+            <button type="submit">予定を登録</button>
+        </form>
+
+        <h2>登録された予定</h2>
+        <div id="eventList">
+            <p>まだ予定は登録されていません。</p>
+        </div>
     </main>
+
+    <script src="script.js"></script>
 </body>
 </html>
