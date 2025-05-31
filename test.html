@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>就活管理アプリ</title>
     <style>
-        /* 簡単なスタイルを追加して見やすくします */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -57,12 +56,8 @@
         .event-item p {
             margin-bottom: 5px;
         }
-        .event-item a { /* URLのリンクスタイル */
-            color: #007bff;
-            text-decoration: none;
-        }
-        .event-item a:hover {
-            text-decoration: underline;
+        .margin-top {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -92,13 +87,11 @@
             </div>
             <button type="submit">予定を登録</button>
         </form>
-
-        <h2>登録された予定</h2>
-        <div id="eventList">
-            <p>まだ予定は登録されていません。</p>
-        </div>
+            <button type="button" onclick="location.href='events.html'" class="margin-top">予定一覧</button>
+</p>
     </main>
 
     <script src="script.js"></script>
+    <script src="timeline.js"></script>
 </body>
 </html>

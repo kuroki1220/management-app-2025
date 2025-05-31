@@ -6,56 +6,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventDetailsInput = document.getElementById('eventDetails');
     const eventListDiv = document.getElementById('eventList');
 
-    let events = [];
+    eventForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-    function loadEvents() {
-        const storedEvents = localStorage.getItem('events');
-        if (storedEvents) {
-            events = JSON.parse(storedEvents);
-        }
-    }
+        let storedEvents = JSON.parse(localStorage.getItem('events')) || [];
 
-    // localStorageにデータの保存
-    function saveEvents() {
-        localStorage.setItem('events', JSON.stringify(events));
-    }
+        const newEvent = {
+            name: eventNameInput.value,
+            date: eventDateInput.value,
+            details: eventDetailsInput.value
+        };
 
-    eventForm.addEventListener('submit', (event) => {
-        event.preventDefault();
+        storedEvents.push(newEvent);
 
-        const eventName = eventNameInput.value;
-        const eventDate = eventDateInput.value;
-        const eventUrl = eventUrlInput.value;
-        const eventDetails = eventDetailsInput.value;
+        localStorage.setItem('events', JSON.stringify(storedEvents));
 
-        if (eventName && eventDate) {
-            const newEvent = {
-                name: eventName,
-                date: eventDate,
-                url: eventUrl,
-                details: eventDetails
-            };
+        renderEvents(storedEvents);
 
-            events.push(newEvent);
-            saveEvents(); // データを保存
-            renderEvents();
-            clearForm();
-        } else {
-            alert('会社名/イベント名と日付は必須です。');
-        }
+        clearForm();
     });
 
-    function renderEvents() {
+    window.renderEvents = function(eventsData) {
+        const eventsToRender = eventsData || JSON.parse(localStorage.getItem('events')) || [];
+
         eventListDiv.innerHTML = '';
 
-        if (events.length === 0) {
+        if (eventsToRender.length === 0) {
             eventListDiv.innerHTML = '<p>まだ予定は登録されていません。</p>';
             return;
         }
 
-        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        eventsToRender.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        events.forEach((event, index) => {
+        eventsToRender.forEach(event => {
             const eventItem = document.createElement('div');
             eventItem.classList.add('event-item');
 
@@ -91,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             eventListDiv.appendChild(eventItem);
         });
-    }
+    };
 
     function clearForm() {
         eventNameInput.value = '';
@@ -100,7 +83,5 @@ document.addEventListener('DOMContentLoaded', () => {
         eventDetailsInput.value = '';
     }
 
-    
-    loadEvents();
     renderEvents();
 });
