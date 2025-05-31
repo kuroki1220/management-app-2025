@@ -23,76 +23,323 @@
         .event-item p {
             margin-bottom: 5px;
         }
+        .event-item button {
+            margin-top: 5px;
+            margin-right: 5px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .event-item button.delete {
+            background-color: #dc3545;
+        }
+        .event-item button:hover {
+            opacity: 0.8;
+        }
+
+        /* モーダル用スタイル */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .modal-content input[type="text"],
+        .modal-content input[type="date"],
+        .modal-content input[type="url"],
+        .modal-content textarea {
+            width: calc(100% - 16px); /* padding考慮 */
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .modal-content button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .modal-content button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+        .modal-content button.cancel {
+            background-color: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
-    <div id="header-placeholder"></div> <h1>登録された予定一覧</h1>
+    <div id="header-placeholder"></div>
+    <h1>登録された予定一覧</h1>
     <div id="eventList">
         <p>予定を読み込み中...</p>
     </div>
 
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>予定の変更</h2>
+            <form id="editEventForm">
+                <input type="hidden" id="editEventId">
+                <div>
+                    <label for="editEventName">会社名 / イベント名:</label>
+                    <input type="text" id="editEventName" name="eventName" required>
+                </div>
+                <div>
+                    <label for="editEventDate">日付:</label>
+                    <input type="date" id="editEventDate" name="eventDate" required>
+                </div>
+                <div>
+                    <label for="editEventUrl">企業URL (任意):</label>
+                    <input type="url" id="editEventUrl" name="eventUrl" placeholder="例: https://www.example.com">
+                </div>
+                <div>
+                    <label for="editEventDetails">詳細:</label>
+                    <textarea id="editEventDetails" name="eventDetails" rows="4"></textarea>
+                </div>
+                <button type="submit">変更を保存</button>
+                <button type="button" class="cancel" id="cancelEdit">キャンセル</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // 共通ヘッダーを読み込むスクリプト
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-placeholder').innerHTML = data;
-            });
+    // 共通ヘッダーを読み込むスクリプト (これは変更なし)
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-placeholder').innerHTML = data;
+        });
 
-        // 既存のイベント表示スクリプト
-        document.addEventListener('DOMContentLoaded', () => {
-            const eventListDiv = document.getElementById('eventList');
+    document.addEventListener('DOMContentLoaded', () => {
+        const eventListDiv = document.getElementById('eventList');
+        const editModal = document.getElementById('editModal');
+        const editEventForm = document.getElementById('editEventForm');
+        const cancelEditButton = document.getElementById('cancelEdit');
 
-            function renderEvents(events) {
-                eventListDiv.innerHTML = '';
+        // --- データ操作関数 ---
+        function getEventsFromStorage() {
+            const eventsString = localStorage.getItem('events');
+            // console.log("localStorageから読み込んだ生の文字列:", eventsString);
+            const events = eventsString ? JSON.parse(eventsString) : [];
+            // console.log("localStorageからパースしたイベント配列:", JSON.parse(JSON.stringify(events))); // ログ用にディープコピー
+            return events;
+        }
 
-                if (events.length === 0) {
-                    eventListDiv.innerHTML = '<p>まだ予定は登録されていません。</p>';
-                    return;
-                }
+        function saveEventsToStorage(events) {
+            console.log("localStorageへ保存するイベント配列:", JSON.parse(JSON.stringify(events))); // ログ用にディープコピー
+            localStorage.setItem('events', JSON.stringify(events));
+        }
 
-                events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        // --- イベント描画関数 ---
+        function renderEvents() {
+            console.log("renderEvents が呼ばれました。");
+            eventListDiv.innerHTML = '';
+            const events = getEventsFromStorage();
 
-                events.forEach(event => {
-                    const eventItem = document.createElement('div');
-                    eventItem.classList.add('event-item');
-
-                    const eventNameEl = document.createElement('h3');
-                    eventNameEl.textContent = event.name;
-
-                    const eventDateEl = document.createElement('p');
-                    eventDateEl.textContent = `日付: ${event.date}`;
-
-                    const eventDetailsEl = document.createElement('p');
-                    eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`;
-
-                    // URL表示ロジックも追加
-                    if (event.url) {
-                        const eventUrlEl = document.createElement('p');
-                        const urlLink = document.createElement('a');
-                        let formattedUrl = event.url;
-                        if (!/^https?:\/\//i.test(formattedUrl)) {
-                            formattedUrl = 'http://' + formattedUrl;
-                        }
-                        urlLink.href = formattedUrl;
-                        urlLink.textContent = '企業ホームページ';
-                        urlLink.target = '_blank';
-                        urlLink.rel = 'noopener noreferrer';
-                        eventUrlEl.appendChild(urlLink);
-                        eventItem.appendChild(eventUrlEl);
-                    }
-
-                    eventItem.appendChild(eventNameEl);
-                    eventItem.appendChild(eventDateEl);
-                    eventItem.appendChild(eventDetailsEl);
-
-                    eventListDiv.appendChild(eventItem);
-                });
+            if (!events || events.length === 0) {
+                eventListDiv.innerHTML = '<p>まだ予定は登録されていません。</p>';
+                return;
             }
 
-            const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-            renderEvents(storedEvents);
+            events.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            events.forEach(event => {
+                // event オブジェクトと event.id の存在をチェック
+                if (!event || typeof event.id === 'undefined') {
+                    console.warn("描画スキップ: 不正なイベントデータまたはIDがありません。", event);
+                    return; // このイベントの描画をスキップ
+                }
+                // console.log(`描画中のイベント: ${event.name} (ID: ${event.id})`);
+
+                const eventItem = document.createElement('div');
+                eventItem.classList.add('event-item');
+                eventItem.dataset.id = event.id;
+
+                const eventNameEl = document.createElement('h3');
+                eventNameEl.textContent = event.name;
+
+                const eventDateEl = document.createElement('p');
+                eventDateEl.textContent = `日付: ${event.date}`;
+
+                const eventDetailsEl = document.createElement('p');
+                eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`;
+
+                eventItem.appendChild(eventNameEl);
+                eventItem.appendChild(eventDateEl);
+                eventItem.appendChild(eventDetailsEl);
+
+                if (event.url) {
+                    const eventUrlEl = document.createElement('p');
+                    const urlLink = document.createElement('a');
+                    let formattedUrl = event.url;
+                    // URLが空文字列でないことも確認
+                    if (formattedUrl && typeof formattedUrl === 'string' && !/^https?:\/\//i.test(formattedUrl)) {
+                        formattedUrl = 'http://' + formattedUrl;
+                    }
+                    urlLink.href = formattedUrl;
+                    urlLink.textContent = '企業ホームページへアクセス';
+                    urlLink.target = '_blank';
+                    urlLink.rel = 'noopener noreferrer';
+                    eventUrlEl.appendChild(urlLink);
+                    eventItem.appendChild(eventUrlEl);
+                }
+
+                // 変更ボタン
+                const editButton = document.createElement('button');
+                editButton.textContent = '変更';
+                editButton.addEventListener('click', function() {
+                    // この無名関数が呼ばれた時点での event.id を使う (クロージャにより保持される)
+                    console.log(`変更ボタンクリック: イベントID '${event.id}'`);
+                    openEditModal(event.id);
+                });
+                eventItem.appendChild(editButton);
+
+                // 削除ボタン
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = '削除';
+                deleteButton.classList.add('delete');
+                deleteButton.addEventListener('click', function() {
+                    console.log(`削除ボタンクリック: イベントID '${event.id}'`);
+                    deleteEvent(event.id);
+                });
+                eventItem.appendChild(deleteButton);
+
+                eventListDiv.appendChild(eventItem);
+            });
+        }
+
+        // --- 削除処理 ---
+        function deleteEvent(idToDelete) {
+            console.log(`deleteEvent 呼び出し: 削除対象ID '${idToDelete}' (型: ${typeof idToDelete})`);
+            if (typeof idToDelete === 'undefined') {
+                console.error("削除エラー: IDが undefined です。");
+                return;
+            }
+            if (confirm('この予定を削除してもよろしいですか？')) {
+                let events = getEventsFromStorage();
+                const initialLength = events.length;
+                
+                // IDを文字列として比較
+                const updatedEvents = events.filter(event => {
+                    // console.log(`フィルタリング比較: event.id '${event.id}' (型: ${typeof event.id}) と idToDelete '${idToDelete}' (型: ${typeof idToDelete})`);
+                    return String(event.id) !== String(idToDelete);
+                });
+
+                if (updatedEvents.length === initialLength && initialLength > 0) {
+                     console.warn(`削除フィルタでイベントが減りませんでした。ID '${idToDelete}' が見つからなかった可能性があります。`);
+                } else {
+                    console.log(`イベント削除成功。元の件数: ${initialLength}, 新しい件数: ${updatedEvents.length}`);
+                }
+
+                saveEventsToStorage(updatedEvents);
+                renderEvents();
+            }
+        }
+
+        // --- 変更処理 (モーダル表示) ---
+        function openEditModal(idToEdit) {
+            console.log(`openEditModal 呼び出し: 編集対象ID '${idToEdit}' (型: ${typeof idToEdit})`);
+            if (typeof idToEdit === 'undefined') {
+                console.error("編集モーダル表示エラー: IDが undefined です。");
+                return;
+            }
+            const events = getEventsFromStorage();
+            // IDを文字列として比較
+            const eventToEdit = events.find(event => String(event.id) === String(idToEdit));
+
+            console.log("編集対象として見つかったイベント:", eventToEdit ? JSON.parse(JSON.stringify(eventToEdit)) : "見つかりません");
+
+            if (eventToEdit) {
+                document.getElementById('editEventId').value = eventToEdit.id; // id は hidden input に保存
+                document.getElementById('editEventName').value = eventToEdit.name;
+                document.getElementById('editEventDate').value = eventToEdit.date;
+                document.getElementById('editEventUrl').value = eventToEdit.url || '';
+                document.getElementById('editEventDetails').value = eventToEdit.details || '';
+                editModal.style.display = 'block';
+            } else {
+                console.error(`編集対象のイベントが見つかりません。ID: '${idToEdit}'`);
+                alert("編集対象の予定が見つかりませんでした。ページを再読み込みしてもう一度お試しください。");
+            }
+        }
+
+        function closeEditModal() {
+            editModal.style.display = 'none';
+        }
+
+        // --- 変更処理 (フォーム送信) ---
+        editEventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const idToSave = document.getElementById('editEventId').value; // hidden input から ID を取得
+            console.log(`変更保存試行: イベントID '${idToSave}' (型: ${typeof idToSave})`);
+
+            if (!idToSave) { // IDが空やnullの場合
+                console.error("保存エラー: editEventId が空です。");
+                alert("IDが取得できませんでした。保存処理を中断します。");
+                return;
+            }
+
+            let events = getEventsFromStorage();
+            // IDを文字列として比較
+            const eventIndex = events.findIndex(event => String(event.id) === String(idToSave));
+
+            console.log(`保存対象のイベントインデックス: ${eventIndex}`);
+
+            if (eventIndex > -1) {
+                // 既存のイベントオブジェクトのプロパティを更新
+                events[eventIndex].name = document.getElementById('editEventName').value;
+                events[eventIndex].date = document.getElementById('editEventDate').value;
+                events[eventIndex].url = document.getElementById('editEventUrl').value;
+                events[eventIndex].details = document.getElementById('editEventDetails').value;
+                // events[eventIndex].id は変更しない
+
+                console.log("更新後のイベントデータ:", JSON.parse(JSON.stringify(events[eventIndex])));
+                saveEventsToStorage(events);
+                renderEvents();
+                closeEditModal();
+                alert('予定が更新されました！');
+            } else {
+                console.error(`保存対象のイベントが見つかりません。ID: '${idToSave}'`);
+                alert("更新対象の予定が見つかりませんでした。保存できませんでした。");
+            }
         });
-    </script>
+
+        cancelEditButton.addEventListener('click', closeEditModal);
+
+        // モーダル外クリックで閉じる
+        window.addEventListener('click', (event) => {
+            if (event.target == editModal) {
+                closeEditModal();
+            }
+        });
+
+        // 初期表示
+        renderEvents();
+    });
+</script>
 </body>
 </html>

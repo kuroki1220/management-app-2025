@@ -26,7 +26,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        button {
+        button { /* 登録ボタンのスタイル */
             padding: 10px 20px;
             background-color: #007bff;
             color: white;
@@ -34,35 +34,39 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        button:hover {
+        button:hover { /* 登録ボタンのホバー時スタイル */
             background-color: #0056b3;
         }
 
         #tagButtons {
-            flex-direction: column;
+            /* flex-direction: column; /* これがあると縦並びになるので、横並びさせたい場合は削除または調整 */
+            display: flex; /* 横並びにするために追加 */
             flex-wrap: wrap;
             gap: 9px;
-            width: 600px;
-        }  
+            /* width: 600px; /* 必要に応じて調整 */
+            margin-bottom: 5px; /* テキストエリアとの間隔調整 */
+        }   
 
-        .tag-button {
+        .tag-button { /* タグボタン固有のスタイル */
             padding: 8px 12px;
-            margin-top: 5px;
+            /* margin-top: 5px; /* display:flex と gap で調整するので不要な場合あり */
             background-color: #6c757d;
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 14px;
-            text-align: left;
+            /* text-align: left; /* 中央揃えの方がボタンらしい場合は center */
             cursor: pointer;
             transition: background-color 0.2s ease;
-            width: 180px;
+            /* width: 180px; /* 固定幅が必要な場合。可変にしたい場合は削除 */
         }
 
         .tag-button:hover {
             background-color: #5a6268;
         }
 
+        /* #eventList, .event-item 関連のスタイルは test.html では使用されていないため、削除しても影響ありません */
+        /* ただし、何らかの理由で残している場合はそのままでも構いません */
         #eventList {
             margin-top: 30px;
             border-top: 1px solid #eee;
@@ -82,13 +86,14 @@
         .event-item p {
             margin-bottom: 5px;
         }
-        .margin-top {
+        .margin-top { /* このクラスがどこかで使われているか確認。なければ不要 */
             margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="header-placeholder"></div> <main>
+    <div id="header-placeholder"></div>
+    <main>
         <h2>予定の登録</h2>
         <form id="eventForm">
             <div>
@@ -107,19 +112,20 @@
             <div>
                 <label for="eventDetails">詳細:</label>
                 <div id="tagButtons">
-                    <button type="button" class="tag-button" data-tag="[企業説明会]">企業説明会</button>
-                    <button type="button" class="tag-button" data-tag="[インターン]">インターン</button>
-                    <button type="button" class="tag-button" data-tag="[面接]">面接</button>
-                    <button type="button" class="tag-button" data-tag="[web]">web</button>
-                    <button type="button" class="tag-button" data-tag="[対面]">対面</button>
+                    <button type="button" class="tag-button" data-tag="[企業説明会]">[企業説明会]</button>
+                    <button type="button" class="tag-button" data-tag="[インターン]">[インターン]</button>
+                    <button type="button" class="tag-button" data-tag="[面接]">[面接]</button>
+                    <button type="button" class="tag-button" data-tag="[web]">[web]</button>
+                    <button type="button" class="tag-button" data-tag="[対面]">[対面]</button>
                 </div>
                 <textarea id="eventDetails" name="eventDetails" rows="4"></textarea>
             </div>
             <button type="submit">予定を登録</button>
         </form>
-        </main>
+    </main>
 
     <script>
+        // 共通ヘッダーを読み込むスクリプト
         fetch('header.html')
             .then(response => response.text())
             .then(data => {
@@ -127,6 +133,34 @@
             });
     </script>
     <script src="script.js"></script>
-    <script src="timeline.js"></script>
+    <script src="timeline.js"></script> 
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tagButtonsContainer = document.getElementById('tagButtons');
+        const eventDetailsTextarea = document.getElementById('eventDetails');
+
+        // タグボタンのコンテナが存在し、かつ詳細テキストエリアが存在する場合のみ処理
+        if (tagButtonsContainer && eventDetailsTextarea) {
+            // タグボタン自体へのイベントリスナー設定 (イベントデリゲーションではなく直接設定)
+            const buttons = tagButtonsContainer.querySelectorAll('.tag-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tag = button.dataset.tag; // data-tag属性の値を取得
+                    
+                    // 現在のテキストエリアの内容の末尾にタグを追記
+                    // 末尾が空白でない、かつタグの先頭が空白でない場合は、間にスペースを1つ挿入
+                    if (eventDetailsTextarea.value.length > 0 && 
+                        !/\s$/.test(eventDetailsTextarea.value) && 
+                        tag && !/^\s/.test(tag)) {
+                        eventDetailsTextarea.value += ' ';
+                    }
+                    eventDetailsTextarea.value += tag;
+                    eventDetailsTextarea.focus(); // テキストエリアにフォーカスを移動
+                });
+            });
+        }
+    });
+    </script>
 </body>
 </html>
