@@ -1,10 +1,11 @@
+// script.js
 document.addEventListener('DOMContentLoaded', () => {
     const eventForm = document.getElementById('eventForm');
     const eventNameInput = document.getElementById('eventName');
     const eventDateInput = document.getElementById('eventDate');
     const eventUrlInput = document.getElementById('eventUrl');
     const eventDetailsInput = document.getElementById('eventDetails');
-    const eventListDiv = document.getElementById('eventList');
+    // const eventListDiv = document.getElementById('eventList'); // test.htmlから削除されたため、ここも削除
 
     eventForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newEvent = {
             name: eventNameInput.value,
             date: eventDateInput.value,
+            url: eventUrlInput.value, // URLも保存するように追加
             details: eventDetailsInput.value
         };
 
@@ -21,11 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         localStorage.setItem('events', JSON.stringify(storedEvents));
 
-        renderEvents(storedEvents);
+        // renderEvents(storedEvents); // test.htmlでは一覧表示しないため不要
 
         clearForm();
+        alert('予定が登録されました！'); // 登録完了のフィードバック
     });
 
+    // renderEvents 関数はevents.htmlのスクリプトに移行されたため、ここから削除
+    /*
     window.renderEvents = function(eventsData) {
         const eventsToRender = eventsData || JSON.parse(localStorage.getItem('events')) || [];
 
@@ -57,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (event.url) {
                 const eventUrlEl = document.createElement('p');
                 const urlLink = document.createElement('a');
-                // URLの形式をチェックし、http://またはhttps://が付いていなければ追加
                 let formattedUrl = event.url;
                 if (!/^https?:\/\//i.test(formattedUrl)) {
                     formattedUrl = 'http://' + formattedUrl; 
@@ -75,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             eventListDiv.appendChild(eventItem);
         });
     };
+    */
 
     function clearForm() {
         eventNameInput.value = '';
@@ -83,5 +88,5 @@ document.addEventListener('DOMContentLoaded', () => {
         eventDetailsInput.value = '';
     }
 
-    renderEvents();
+    // renderEvents(); // test.htmlでは初期表示で一覧を表示しないため不要
 });

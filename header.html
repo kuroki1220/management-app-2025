@@ -1,0 +1,72 @@
+<style>
+    .global-header {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap; /* 小さい画面で改行するため */
+    }
+    .global-header h1 {
+        margin: 0;
+        font-size: 24px;
+        flex-grow: 1; /* タイトルが領域を占めるように */
+        text-align: left; /* タイトルを左寄せ */
+        padding-right: 20px; /* ナビゲーションとの間にスペース */
+    }
+    .global-header nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .global-header nav ul li {
+        margin: 0 15px;
+    }
+    .global-header nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        padding: 5px 0;
+        transition: color 0.3s ease;
+    }
+    .global-header nav ul li a:hover {
+        color: #007bff;
+    }
+
+    /* スマートフォン向け調整 */
+    @media (max-width: 600px) {
+        .global-header {
+            flex-direction: column;
+            align-items: flex-start; /* タイトルとナビを左寄せに */
+        }
+        .global-header h1 {
+            text-align: center; /* タイトルを中央に */
+            padding-right: 0;
+            margin-bottom: 10px;
+        }
+        .global-header nav ul {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .global-header nav ul li {
+            margin: 5px 0;
+        }
+    }
+</style>
+<header class="global-header">
+    <h1>就活管理アプリ</h1>
+    <nav>
+        <ul>
+            <li><a href="test.html">予定登録</a></li>
+            <li><a href="events.html">予定一覧</a></li>
+            <li><a href="company_event_list.html">企業/イベント一覧</a></li>
+            </ul>
+    </nav>
+</header>

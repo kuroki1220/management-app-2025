@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登録された予定一覧</title>
+    <title>就活管理アプリ - 予定一覧</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,50 +26,73 @@
     </style>
 </head>
 <body>
-    <h1>登録された予定一覧</h1>
+    <div id="header-placeholder"></div> <h1>登録された予定一覧</h1>
     <div id="eventList">
         <p>予定を読み込み中...</p>
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const eventListDiv = document.getElementById('eventList');
+        // 共通ヘッダーを読み込むスクリプト
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
 
-    function renderEvents(events) {
-        eventListDiv.innerHTML = '';
+        // 既存のイベント表示スクリプト
+        document.addEventListener('DOMContentLoaded', () => {
+            const eventListDiv = document.getElementById('eventList');
 
-        if (events.length === 0) {
-            eventListDiv.innerHTML = '<p>まだ予定は登録されていません。</p>';
-            return;
-        }
+            function renderEvents(events) {
+                eventListDiv.innerHTML = '';
 
-        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+                if (events.length === 0) {
+                    eventListDiv.innerHTML = '<p>まだ予定は登録されていません。</p>';
+                    return;
+                }
 
-        events.forEach(event => {
-            const eventItem = document.createElement('div');
-            eventItem.classList.add('event-item');
+                events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            const eventNameEl = document.createElement('h3');
-            eventNameEl.textContent = event.name;
+                events.forEach(event => {
+                    const eventItem = document.createElement('div');
+                    eventItem.classList.add('event-item');
 
-            const eventDateEl = document.createElement('p');
-            eventDateEl.textContent = `日付: ${event.date}`;
+                    const eventNameEl = document.createElement('h3');
+                    eventNameEl.textContent = event.name;
 
-            const eventDetailsEl = document.createElement('p');
-            eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`;
+                    const eventDateEl = document.createElement('p');
+                    eventDateEl.textContent = `日付: ${event.date}`;
 
-            eventItem.appendChild(eventNameEl);
-            eventItem.appendChild(eventDateEl);
-            eventItem.appendChild(eventDetailsEl);
+                    const eventDetailsEl = document.createElement('p');
+                    eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`;
 
-            eventListDiv.appendChild(eventItem);
+                    // URL表示ロジックも追加
+                    if (event.url) {
+                        const eventUrlEl = document.createElement('p');
+                        const urlLink = document.createElement('a');
+                        let formattedUrl = event.url;
+                        if (!/^https?:\/\//i.test(formattedUrl)) {
+                            formattedUrl = 'http://' + formattedUrl;
+                        }
+                        urlLink.href = formattedUrl;
+                        urlLink.textContent = '企業ホームページ';
+                        urlLink.target = '_blank';
+                        urlLink.rel = 'noopener noreferrer';
+                        eventUrlEl.appendChild(urlLink);
+                        eventItem.appendChild(eventUrlEl);
+                    }
+
+                    eventItem.appendChild(eventNameEl);
+                    eventItem.appendChild(eventDateEl);
+                    eventItem.appendChild(eventDetailsEl);
+
+                    eventListDiv.appendChild(eventItem);
+                });
+            }
+
+            const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+            renderEvents(storedEvents);
         });
-    }
-
-    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-    renderEvents(storedEvents);
-});
-</script>
-
+    </script>
 </body>
 </html>
