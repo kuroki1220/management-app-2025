@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>就活管理アプリ</title>
+    <title>就活管理アプリ - 予定登録</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,7 +19,7 @@
         }
         input[type="text"],
         input[type="date"],
-        input[type="url"], /* URL入力用にスタイルを追加 */
+        input[type="url"],
         textarea {
             width: 300px;
             padding: 8px;
@@ -37,7 +37,7 @@
         button:hover {
             background-color: #0056b3;
         }
-        #eventList {
+        #eventList { /* このセクションは今後events.htmlに移行すると良いかもしれません */
             margin-top: 30px;
             border-top: 1px solid #eee;
             padding-top: 20px;
@@ -56,17 +56,13 @@
         .event-item p {
             margin-bottom: 5px;
         }
-        .margin-top {
+        .margin-top { /* このスタイルは共通ヘッダーのボタンと競合しないように削除または調整 */
             margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>就活管理アプリ</h1>
-    </header>
-    <main>
-
+    <div id="header-placeholder"></div> <main>
         <h2>予定の登録</h2>
         <form id="eventForm">
             <div>
@@ -87,10 +83,16 @@
             </div>
             <button type="submit">予定を登録</button>
         </form>
-            <button type="button" onclick="location.href='events.html'" class="margin-top">予定一覧</button>
-</p>
-    </main>
+        </main>
 
+    <script>
+        // 共通ヘッダーを読み込むスクリプト
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+    </script>
     <script src="script.js"></script>
     <script src="timeline.js"></script>
 </body>

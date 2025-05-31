@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>就活管理アプリ - タイムライン</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #timeline {
+            margin-top: 20px;
+        }
+        #timeline ul {
+            list-style: none;
+            padding-left: 0;
+            border-left: 4px solid #007bff; /* タイムラインの線 */
+            padding-left: 20px;
+        }
+        #timeline ul li {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+        #timeline ul li::before { /* 日付の丸い点 */
+            content: '';
+            position: absolute;
+            left: -26px; /* 線の位置に合わせて調整 */
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background-color: #007bff;
+            border-radius: 50%;
+        }
+        #timeline ul li div {
+            margin-bottom: 5px;
+        }
+        #timeline ul li .date {
+            font-weight: bold;
+            color: #555;
+        }
+        #timeline ul li .name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+        #timeline ul li .details {
+            color: #666;
+        }
+        #noTimelineEventsMessage {
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div> <main>
+        <h1>タイムライン表示</h1>
+        <div id="timeline">
+            <p id="noTimelineEventsMessage">まだ予定は登録されていません。</p>
+        </div>
+    </main>
+
+    <script>
+        // 共通ヘッダーを読み込むスクリプト
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+    </script>
+    <script src="timeline.js"></script>
+</body>
+</html>

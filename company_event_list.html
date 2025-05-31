@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="Jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>就活管理アプリ - 企業/イベント一覧</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 { /* このH1はページ固有のものなので残します */
+            color: #333;
+        }
+        .company-group {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .company-group h2 {
+            margin-top: 0;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .event-item {
+            background-color: #fff;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .event-item p {
+            margin: 5px 0;
+        }
+        .event-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .event-item a:hover {
+            text-decoration: underline;
+        }
+        #noEventsMessage {
+            font-style: italic;
+            color: #666;
+        }
+        /* back-to-home スタイルは共通ヘッダーで役割を担うため削除 */
+        /* .back-to-home {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-to-home:hover {
+            background-color: #5a6268;
+        } */
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div> <main>
+        <h1>企業/イベント一覧</h1>
+        <div id="companyEventList">
+            <p id="noEventsMessage">まだ企業やイベントは登録されていません。</p>
+        </div>
+        </main>
+
+    <script>
+        // 共通ヘッダーを読み込むスクリプト
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const companyEventListDiv = document.getElementById('companyEventList');
+            const noEventsMessage = document.getElementById('noEventsMessage');
+            
+            // script.jsからイベントデータを取得 (globalなevents配列を利用)
+            // もしくは、再度localStorageからロードする関数を定義
+            function loadEventsForDisplay() {
+                const storedEvents = localStorage.getItem('events');
+                return storedEvents ? JSON.parse(storedEvents) : [];
+            }
+
+            const events = loadEventsForDisplay();
+
+            if (events.length === 0) {
+                noEventsMessage.style.display = 'block'; // メッセージを表示
+                return;
+            } else {
+                noEventsMessage.style.display = 'none'; // メッセージを非表示
+            }
+
+            // 企業名/イベント名でグループ化
+            const groupedEvents = events.reduce((acc, event) => {
+                const name = event.name;
+                if (!acc[name]) {
+                    acc[name] = [];
+                }
+                acc[name].push(event);
+                return acc;
+            }, {});
+
+            // グループごとに表示
+            for (const companyName in groupedEvents) {
+                const companyGroupDiv = document.createElement('div');
+                companyGroupDiv.classList.add('company-group');
+
+                const companyTitle = document.createElement('h2');
+                companyTitle.textContent = companyName;
+                companyGroupDiv.appendChild(companyTitle);
+
+                // その企業のイベントを日付順にソートして表示
+                groupedEvents[companyName].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                groupedEvents[companyName].forEach(event => {
+                    const eventItem = document.createElement('div');
+                    eventItem.classList.add('event-item');
+
+                    const eventDateEl = document.createElement('p');
+                    eventDateEl.textContent = `日付: ${event.date}`;
+                    eventItem.appendChild(eventDateEl);
+
+                    const eventDetailsEl = document.createElement('p');
+                    eventDetailsEl.textContent = `詳細: ${event.details || 'なし'}`;
+                    eventItem.appendChild(eventDetailsEl);
+
+                    if (event.url) {
+                        const eventUrlEl = document.createElement('p');
+                        const urlLink = document.createElement('a');
+                        let formattedUrl = event.url;
+                        if (!/^https?:\/\//i.test(formattedUrl)) {
+                            formattedUrl = 'http://' + formattedUrl;
+                        }
+                        urlLink.href = formattedUrl;
+                        urlLink.textContent = '企業ホームページへアクセス';
+                        urlLink.target = '_blank';
+                        urlLink.rel = 'noopener noreferrer';
+                        eventUrlEl.appendChild(urlLink);
+                        eventItem.appendChild(eventUrlEl);
+                    }
+                    companyGroupDiv.appendChild(eventItem);
+                });
+                companyEventListDiv.appendChild(companyGroupDiv);
+            }
+        });
+    </script>
+</body>
+</html>
