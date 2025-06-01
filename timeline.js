@@ -18,8 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // イベントを日付と時間でソート
         const sortedEvents = [...storedEvents].sort((a, b) => {
-            const dateA = new Date(a.date + (a.time ? 'T' + a.time : ''));
-            const dateB = new Date(b.date + (b.time ? 'T' + b.time : ''));
+            // startTimeがあればstartTime、なければendTime、それもなければ空で比較
+            const getTimeString = (event) => {
+                if (event.startTime) return event.startTime;
+                if (event.endTime) return event.endTime;
+                return '';
+            };
+            const dateA = new Date(a.date + (getTimeString(a) ? 'T' + getTimeString(a) : ''));
+            const dateB = new Date(b.date + (getTimeString(b) ? 'T' + getTimeString(b) : ''));
             return dateA - dateB;
         });
 
@@ -30,7 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const date = document.createElement('div');
             date.classList.add('date');
-            date.textContent = event.date + (event.time ? ` ${event.time}` : ''); // 時間も表示
+            
+            let timeDisplay = '';
+            if (event.startTime && event.endTime) {
+                timeDisplay = ` ${event.startTime} - ${event.endTime}`;
+            } else if (event.startTime) {
+                timeDisplay = ` ${event.startTime}`;
+            } else if (event.endTime) {
+                timeDisplay = ` ~ ${event.endTime}`;
+            }
+            date.textContent = event.date + timeDisplay; // 時間も表示
 
             const name = document.createElement('div');
             name.classList.add('name');
@@ -44,10 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const urlLink = document.createElement('a');
                 let formattedUrl = event.url;
                 if (!/^https?:\/\//i.test(formattedUrl)) {
-                    formattedUrl = 'http://' + formattedUrl; 
+                    formattedUrl = 'http://' + formattedUrl;
                 }
                 urlLink.href = formattedUrl;
-                urlLink.textContent = '企業ホームページへアクセス'; 
+                urlLink.textContent = '企業ホームページへアクセス';
                 urlLink.target = '_blank';
                 urlLink.rel = 'noopener noreferrer';
                 const urlDiv = document.createElement('div'); // URL表示用のdivを追加

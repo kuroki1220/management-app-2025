@@ -48,7 +48,6 @@
             font-style: italic;
             color: #666;
         }
-        /* back-to-home スタイルは共通ヘッダーで役割を担うため削除 */
     </style>
 </head>
 <body>
@@ -105,14 +104,29 @@
                 companyGroupDiv.appendChild(companyTitle);
 
                 // その企業のイベントを日付順にソートして表示
-                groupedEvents[companyName].sort((a, b) => new Date(a.date) - new Date(b.date));
+                // 日付だけでなく、開始時間も考慮してソートするように変更
+                groupedEvents[companyName].sort((a, b) => {
+                    const dateTimeA = new Date(`${a.date}T${a.startTime || '00:00'}`);
+                    const dateTimeB = new Date(`${b.date}T${b.startTime || '00:00'}`);
+                    return dateTimeA - dateTimeB;
+                });
+
 
                 groupedEvents[companyName].forEach(event => {
                     const eventItem = document.createElement('div');
                     eventItem.classList.add('event-item');
 
                     const eventDateEl = document.createElement('p');
-                    eventDateEl.textContent = `日付: ${event.date}`;
+                    // ★修正: 時間も表示する
+                    let timeDisplay = '';
+                    if (event.startTime && event.endTime) {
+                        timeDisplay = ` ${event.startTime} - ${event.endTime}`;
+                    } else if (event.startTime) {
+                        timeDisplay = ` ${event.startTime}`;
+                    } else if (event.endTime) {
+                        timeDisplay = ` ~ ${event.endTime}`;
+                    }
+                    eventDateEl.textContent = `日付: ${event.date}${timeDisplay}`;
                     eventItem.appendChild(eventDateEl);
 
                     const eventDetailsEl = document.createElement('p');
