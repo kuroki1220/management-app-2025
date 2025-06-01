@@ -7,14 +7,13 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0; /* ヘッダーを考慮し、bodyのmarginをリセット */
-            padding: 20px; /* ヘッダーとの間隔 */
-            /* ここから背景画像に関する追加 */
-            background-image: url('https://azp2.sakuraweb.com/kakou/aozora/sample1.jpg'); /* ★ここにWeb上の画像URLを貼り付けます */
-            background-size: cover; /* 画面全体に画像を広げる */
-            background-position: center; /* 画像を中央に配置 */
-            background-attachment: fixed; /* スクロールしても画像を固定 */
-            color: #3A6EA5; /* テキストの色を調整すると画像とのコントラストが保てます */
+            margin: 0; 
+            padding: 20px; 
+            background-image: url('https://azp2.sakuraweb.com/kakou/aozora/sample1.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+            color: #3A6EA5; 
             background-color: #f5f5f5;
         }
 
@@ -22,7 +21,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: calc(100vh - 100px); /* タイトル分を引く */
+            min-height: calc(100vh - 100px); 
         }
 
         h2 {
@@ -38,7 +37,7 @@
         }
         input[type="text"],
         input[type="date"],
-        input[type="time"], /* 追加 */
+        input[type="time"], 
         input[type="url"],
         textarea {
             width: 500px;
@@ -46,7 +45,7 @@
             border: 1px solid white;
             border-radius: 4px;
         }
-        button { /* 登録ボタンのスタイル */
+        button {
             padding: 10px 20px;
             background-color: #4a90d6;
             color: white;
@@ -55,7 +54,7 @@
             cursor: pointer;
             margin-top: 5px;
         }
-        button:hover { /* 登録ボタンのホバー時スタイル */
+        button:hover { 
             background-color: #2a4e74;
         }
 
@@ -64,14 +63,13 @@
         }
         
         #tagButtons {
-            display: flex; /* 横並びにするために追加 */
+            display: flex; 
             flex-wrap: wrap;
             gap: 9px;
             margin-bottom: 5px;
-             /* テキストエリアとの間隔調整 */
         }    
 
-        .tag-button { /* タグボタン固有のスタイル */
+        .tag-button { 
             padding: 8px 12px;
             background-color: #4a90d6;
             color: white;
@@ -87,7 +85,6 @@
             background-color: #2a4e74;
         }
 
-        /* #eventList, .event-item 関連のスタイルは test.html では使用されていないため、削除しても影響ありません */
         #eventList {
             margin-top: 30px;
             border-top: 1px solid #eee;
@@ -107,7 +104,7 @@
         .event-item p {
             margin-bottom: 5px;
         }
-        .margin-top { /* このクラスがどこかで使われているか確認。なければ不要 */
+        .margin-top {
             margin-top: 10px;
         }
     </style>
@@ -156,7 +153,6 @@
     </div>
 
     <script>
-        // 共通ヘッダーを読み込むスクリプト
         fetch('header.html')
             .then(response => response.text())
             .then(data => {
@@ -170,22 +166,19 @@
         const tagButtonsContainer = document.getElementById('tagButtons');
         const eventDetailsTextarea = document.getElementById('eventDetails');
 
-        // タグボタンのコンテナが存在し、かつ詳細テキストエリアが存在する場合のみ処理
         if (tagButtonsContainer && eventDetailsTextarea) {
             const buttons = tagButtonsContainer.querySelectorAll('.tag-button');
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
-                    const tag = button.dataset.tag; // data-tag属性の値を取得
+                    const tag = button.dataset.tag; 
                     
-                    // 現在のテキストエリアの内容の末尾にタグを追記
-                    // 末尾が空白でない、かつタグの先頭が空白でない場合は、間にスペースを1つ挿入
                     if (eventDetailsTextarea.value.length > 0 &&    
                         !/\s$/.test(eventDetailsTextarea.value) &&    
                         tag && !/^\s/.test(tag)) {
                         eventDetailsTextarea.value += ' ';
                     }
                     eventDetailsTextarea.value += tag;
-                    eventDetailsTextarea.focus(); // テキストエリアにフォーカスを移動
+                    eventDetailsTextarea.focus(); 
                 });
             });
         }

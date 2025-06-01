@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0; /* ヘッダーを考慮し、bodyのmarginをリセット */
-            padding: 20px; /* ヘッダーとの間隔 */
+            margin: 0; 
+            padding: 20px; 
         }
         h1 {
             color: #333;
@@ -19,7 +19,7 @@
         #timeline ul {
             list-style: none;
             padding-left: 0;
-            border-left: 4px solid #007bff; /* タイムラインの線 */
+            border-left: 4px solid #007bff; 
             padding-left: 20px;
         }
         #timeline ul li {
@@ -27,10 +27,10 @@
             margin-bottom: 30px;
             padding-left: 20px;
         }
-        #timeline ul li::before { /* 日付の丸い点 */
+        #timeline ul li::before {
             content: '';
             position: absolute;
-            left: -26px; /* 線の位置に合わせて調整 */
+            left: -26px;
             top: 5px;
             width: 12px;
             height: 12px;
@@ -67,7 +67,6 @@
     </main>
 
     <script>
-        // 共通ヘッダーを読み込むスクリプト
         fetch('header.html')
             .then(response => response.text())
             .then(data => {
