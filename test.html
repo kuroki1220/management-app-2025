@@ -47,7 +47,7 @@
             flex-wrap: wrap;
             gap: 9px;
             margin-bottom: 5px; /* テキストエリアとの間隔調整 */
-        }   
+        }    
 
         .tag-button { /* タグボタン固有のスタイル */
             padding: 8px 12px;
@@ -131,7 +131,6 @@
             });
     </script>
     <script src="script.js"></script>
-    <script src="timeline.js"></script> 
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -147,8 +146,8 @@
                     
                     // 現在のテキストエリアの内容の末尾にタグを追記
                     // 末尾が空白でない、かつタグの先頭が空白でない場合は、間にスペースを1つ挿入
-                    if (eventDetailsTextarea.value.length > 0 && 
-                        !/\s$/.test(eventDetailsTextarea.value) && 
+                    if (eventDetailsTextarea.value.length > 0 &&    
+                        !/\s$/.test(eventDetailsTextarea.value) &&    
                         tag && !/^\s/.test(tag)) {
                         eventDetailsTextarea.value += ' ';
                     }
