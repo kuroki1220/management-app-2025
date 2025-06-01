@@ -11,13 +11,13 @@
             display: flex;
             flex-direction: column; /* ヘッダーのために追加 */
             justify-content: flex-start;
-            align-items: center;
+            /* align-items: center; */ /* ★修正: この行を削除またはコメントアウト */
             min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
             background-color: #f4f7f6;
             color: #333;
-            padding: 0; /* ヘッダーを考慮し、bodyのpaddingをリセット */
-            box-sizing: border-box;
         }
 
         .container {
@@ -28,7 +28,7 @@
             width: 90%;
             max-width: 600px; /* 1日ごとの表示に合わせて幅を調整 */
             box-sizing: border-box;
-            margin-top: 20px; /* ヘッダーとの間隔 */
+            /* margin-top: 20px; */ /* 前回の修正で削除済み */
             margin-bottom: 20px;
         }
 
@@ -259,24 +259,6 @@
             background-color: #c82333;
         }
 
-        /* ページ遷移リンク */
-        /* ヘッダーに統合するため削除 */
-        /* .page-links {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .page-links a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        .page-links a:hover {
-            background-color: #5a6268;
-        } */
     </style>
 </head>
 <body>
@@ -290,7 +272,7 @@
         </div>
         <div id="calendar">
         </div>
-        </div>
+    </div>
 
     <div id="editEventModal" class="modal">
         <div class="modal-content">
