@@ -1,24 +1,20 @@
-// timeline.js
 document.addEventListener('DOMContentLoaded', () => {
     const timelineDiv = document.getElementById('timeline');
     const noTimelineEventsMessage = document.getElementById('noTimelineEventsMessage');
 
     function renderTimeline() {
-        timelineDiv.innerHTML = ''; // 既存の内容をクリア
+        timelineDiv.innerHTML = ''; 
 
-        // localStorageから直接イベントデータをロード
-        const storedEvents = JSON.parse(localStorage.getItem('events')) || []; // キーを 'events' に統一
+        const storedEvents = JSON.parse(localStorage.getItem('events')) || []; 
 
         if (storedEvents.length === 0) {
-            noTimelineEventsMessage.style.display = 'block'; // メッセージを表示
+            noTimelineEventsMessage.style.display = 'block'; 
             return;
         } else {
-            noTimelineEventsMessage.style.display = 'none'; // メッセージを非表示
+            noTimelineEventsMessage.style.display = 'none'; 
         }
 
-        // イベントを日付と時間でソート
         const sortedEvents = [...storedEvents].sort((a, b) => {
-            // startTimeがあればstartTime、なければendTime、それもなければ空で比較
             const getTimeString = (event) => {
                 if (event.startTime) return event.startTime;
                 if (event.endTime) return event.endTime;
@@ -45,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (event.endTime) {
                 timeDisplay = ` ~ ${event.endTime}`;
             }
-            date.textContent = event.date + timeDisplay; // 時間も表示
+            date.textContent = event.date + timeDisplay; 
 
             const name = document.createElement('div');
             name.classList.add('name');
@@ -65,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 urlLink.textContent = '企業ホームページへアクセス';
                 urlLink.target = '_blank';
                 urlLink.rel = 'noopener noreferrer';
-                const urlDiv = document.createElement('div'); // URL表示用のdivを追加
+                const urlDiv = document.createElement('div');
                 urlDiv.appendChild(urlLink);
                 item.appendChild(urlDiv);
             }
@@ -78,6 +74,5 @@ document.addEventListener('DOMContentLoaded', () => {
         timelineDiv.appendChild(timelineList);
     }
 
-    // 初期表示
     renderTimeline();
 });

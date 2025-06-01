@@ -7,18 +7,20 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0; /* ヘッダーを考慮し、bodyのmarginをリセット */
-            padding: 20px; /* ヘッダーとの間隔 */
-            /* ここから背景画像に関する追加 */
-            background-image: url('https://azp2.sakuraweb.com/kakou/aozora/sample1.jpg'); /* ★ここにWeb上の画像URLを貼り付けます */
+            margin: 0; 
+            padding: 20px; 
+            background-image: url('https://azp2.sakuraweb.com/kakou/aozora/sample1.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            background-color: #f4f7f6; /* フォールバックカラー、画像が見つからない場合や読み込み中の背景色 */
+            background-color: #f4f7f6; 
             color: #333;
         }
-        h1 { /* このH1はページ固有のものなので残します */
-            color: #333;
+        .page-title {
+        color: #3A6EA5; 
+        }
+        h1 { 
+            color: #f9f9f9;
         }
         .company-group {
             margin-bottom: 30px;
@@ -59,14 +61,13 @@
 </head>
 <body>
     <div id="header-placeholder"></div> <main>
-        <h1>企業/イベント一覧</h1>
+        <h1 class="page-title">企業/イベント一覧</h1>
         <div id="companyEventList">
             <p id="noEventsMessage">まだ企業やイベントは登録されていません。</p>
         </div>
     </main>
 
     <script>
-        // 共通ヘッダーを読み込むスクリプト
         fetch('header.html')
             .then(response => response.text())
             .then(data => {
@@ -78,20 +79,19 @@
             const noEventsMessage = document.getElementById('noEventsMessage');
             
             function loadEventsForDisplay() {
-                const storedEvents = localStorage.getItem('events'); // キーは 'events'
+                const storedEvents = localStorage.getItem('events'); 
                 return storedEvents ? JSON.parse(storedEvents) : [];
             }
 
             const events = loadEventsForDisplay();
 
             if (events.length === 0) {
-                noEventsMessage.style.display = 'block'; // メッセージを表示
+                noEventsMessage.style.display = 'block'; 
                 return;
             } else {
-                noEventsMessage.style.display = 'none'; // メッセージを非表示
+                noEventsMessage.style.display = 'none';
             }
 
-            // 企業名/イベント名でグループ化
             const groupedEvents = events.reduce((acc, event) => {
                 const name = event.name;
                 if (!acc[name]) {
@@ -101,7 +101,6 @@
                 return acc;
             }, {});
 
-            // グループごとに表示
             for (const companyName in groupedEvents) {
                 const companyGroupDiv = document.createElement('div');
                 companyGroupDiv.classList.add('company-group');
@@ -110,8 +109,6 @@
                 companyTitle.textContent = companyName;
                 companyGroupDiv.appendChild(companyTitle);
 
-                // その企業のイベントを日付順にソートして表示
-                // 日付だけでなく、開始時間も考慮してソートするように変更
                 groupedEvents[companyName].sort((a, b) => {
                     const dateTimeA = new Date(`${a.date}T${a.startTime || '00:00'}`);
                     const dateTimeB = new Date(`${b.date}T${b.startTime || '00:00'}`);
@@ -124,7 +121,6 @@
                     eventItem.classList.add('event-item');
 
                     const eventDateEl = document.createElement('p');
-                    // ★修正: 時間も表示する
                     let timeDisplay = '';
                     if (event.startTime && event.endTime) {
                         timeDisplay = ` ${event.startTime} - ${event.endTime}`;

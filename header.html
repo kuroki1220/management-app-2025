@@ -8,14 +8,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-wrap: wrap; /* 小さい画面で改行するため */
+        flex-wrap: wrap; 
     }
     .global-header h1 {
         margin: 0;
         font-size: 24px;
-        flex-grow: 1; /* タイトルが領域を占めるように */
-        text-align: left; /* タイトルを左寄せ */
-        padding-right: 20px; /* ナビゲーションとの間にスペース */
+        flex-grow: 1;
+        text-align: left; 
+        padding-right: 20px; 
     }
     .global-header nav ul {
         list-style: none;
@@ -39,14 +39,13 @@
         color: #007bff;
     }
 
-    /* スマートフォン向け調整 */
     @media (max-width: 600px) {
         .global-header {
             flex-direction: column;
-            align-items: flex-start; /* タイトルとナビを左寄せに */
+            align-items: flex-start; 
         }
         .global-header h1 {
-            text-align: center; /* タイトルを中央に */
+            text-align: center;
             padding-right: 0;
             margin-bottom: 10px;
         }
