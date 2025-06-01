@@ -17,12 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
             let storedEvents = JSON.parse(localStorage.getItem('events')) || [];
 
             // 現在選択されているタグからtypeを決定
-            let eventType = 'other';
-            if (eventDetailsInput.value.includes('[面接]')) {
-                eventType = 'interview';
-            } else if (eventDetailsInput.value.includes('[企業説明会]')) {
+            let eventType = 'other'; // デフォルトは'other'
+            if (eventDetailsInput.value.includes('[企業説明会]')) {
                 eventType = 'briefing';
-            } else if (eventDetailsInput.value.includes('[Web試験]')) { // 例えばWeb試験を締切とする
+            } else if (eventDetailsInput.value.includes('[インターン]')) {
+                // ここを修正しました！
+                eventType = 'intern'; 
+            } else if (eventDetailsInput.value.includes('[面接]')) {
+                eventType = 'interview';
+            } else if (eventDetailsInput.value.includes('[Web試験]')) {
                 eventType = 'deadline';
             }
             // その他のタグはすべて 'other' に分類

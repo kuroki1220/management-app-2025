@@ -217,7 +217,7 @@
         .event-list li.briefing { background-color: #c3e6cb; color: #155724; }
         .event-list li.deadline { background-color: #f8d7da; color: #721c24; }
         .event-list li.other { background-color: #e2e3e5; color: #383d41; }
-
+        .event-list li.intern { background-color: #9eb6e6; color: #0468b9; }
 
         /* モーダルウィンドウのスタイリング */
         .modal {
@@ -331,33 +331,6 @@
             background-color: #c82333;
         }
 
-        /* スマートフォン向け調整 */
-        @media (max-width: 900px) {
-            .main-content-wrapper {
-                flex-direction: column;
-                align-items: center;
-            }
-            .container,
-            #eventDetailsDisplay {
-                max-width: 90%;
-                width: 100%;
-            }
-            #calendar {
-                gap: 3px;
-            }
-            .day-cell {
-                min-height: 80px;
-                padding: 5px;
-            }
-            .day-number {
-                font-size: 1em;
-            }
-            .event-list li {
-                font-size: 0.7em;
-                padding: 3px 5px;
-                margin-bottom: 2px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -726,7 +699,7 @@
                     saveAndRebuildEvents();
                     closeEditModal();
                     renderCalendar();
-                    eventDetailsDisplay.style.display = 'none';
+                    eventDetailsDisplatyle.display = 'none';
                 } else {
                     console.error('削除対象のイベントが見つかりません。');
                 }
