@@ -5,23 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>就活カレンダー・編集</title>
     <style>
-        /* CSS: スタイリング */
+        /* CSS Variables for easier theme management */
+        :root {
+            --primary-blue: #3A6EA5; /* Darker blue for text/headers */
+            --light-blue: #007bff; /* Existing blue for buttons/links */
+            --accent-orange: #FF7F50; /* Orange from the image for some highlights */
+            --off-white: #FCF8F3; /* Background color from the image */
+            --light-grey-border: #D8D2CB; /* Lighter border color */
+            --dark-font: #333;
+            --header-font-size: 2.5em;
+            --calendar-border-radius: 12px;
+            --cell-border-radius: 8px;
+            --event-font-size: 0.85em;
+
+            /* Flower colors (example, adjust as needed) */
+            --flower-interview: #d9534f; /* Reddish for interview */
+            --flower-briefing: #5cb85c; /* Greenish for briefing */
+            --flower-deadline: #f0ad4e; /* Yellowish for deadline */
+            --flower-intern: #337ab7; /* Bluish for intern */
+            --flower-other: #6c757d; /* Greyish for other */
+        }
+
+        /* General Styling */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex; /* ヘッダーとメインコンテンツを縦に並べる */
+            font-family: 'Inter', 'Noto Sans JP', sans-serif; /* Adjusted font-family for a cleaner look */
+            display: flex;
             flex-direction: column;
             justify-content: flex-start;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            background-color: var(--off-white); /* Use CSS variable */
+            color: var(--dark-font); /* Use CSS variable */
             /* ここから背景画像に関する追加 */
             background-image: url('https://azp2.sakuraweb.com/kakou/aozora/sample1.jpg'); /* ★ここにWeb上の画像URLを貼り付けます */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-color: #f4f7f6; /* フォールバックカラー、画像が見つからない場合や読み込み中の背景色 */
-            color: #333;
+            background-size: cover; /* 画面全体に画像を広げる */
+            background-position: center; /* 画像を中央に配置 */
+            background-attachment: fixed; /* スクロールしても画像を固定 */
+            /* Removed background-image as per new design reference */
         }
 
         #header-placeholder {
@@ -30,41 +52,44 @@
         }
 
         .main-content-wrapper {
-            display: flex; /* カレンダーと詳細表示を横並びにするラッパー */
+            display: flex;
             width: 100%;
             gap: 20px;
-            flex-wrap: wrap; /* 画面幅が狭いときに折り返す */
+            flex-wrap: wrap;
             align-items: flex-start;
         }
 
         .container {
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: var(--calendar-border-radius); /* Use CSS variable */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05); /* Lighter shadow */
             padding: 30px;
-            width: 100%; /* フレックスアイテムとして幅を調整 */
-            max-width: 900px; /* 7xNグリッドに合うように幅を広げる */
+            width: 100%;
+            max-width: 900px;
             box-sizing: border-box;
             flex-shrink: 0;
+            border: 1px solid var(--light-grey-border); /* Subtle border */
         }
 
         #eventDetailsDisplay {
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: var(--calendar-border-radius); /* Use CSS variable */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05); /* Lighter shadow */
             padding: 30px;
             width: 100%;
-            max-width: 400px; /* 詳細表示の最大幅 */
+            max-width: 400px;
             box-sizing: border-box;
             display: none;
             flex-grow: 1;
             word-wrap: break-word;
+            border: 1px solid var(--light-grey-border); /* Subtle border */
         }
         #eventDetailsDisplay h3 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--primary-blue); /* Use CSS variable */
             margin-bottom: 20px;
             font-size: 1.8em;
+            font-weight: bold;
         }
         #eventDetailsDisplay p {
             margin-bottom: 10px;
@@ -76,7 +101,7 @@
             margin-bottom: 3px;
         }
         #eventDetailsDisplay a {
-            color: #007bff;
+            color: var(--light-blue);
             text-decoration: none;
         }
         #eventDetailsDisplay a:hover {
@@ -86,7 +111,7 @@
             display: block;
             width: 100%;
             padding: 12px;
-            background-color: #28a745;
+            background-color: var(--light-blue); /* Consistent button color */
             color: white;
             border: none;
             border-radius: 6px;
@@ -96,14 +121,15 @@
             margin-top: 20px;
         }
         #editEventButtonFromDetail:hover {
-            background-color: #218838;
+            background-color: #0056b3; /* Darker blue on hover */
         }
 
         h2 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--primary-blue); /* Use CSS variable */
             margin-bottom: 25px;
-            font-size: 2em;
+            font-size: var(--header-font-size); /* Use CSS variable */
+            font-weight: bold;
         }
 
         .calendar-header {
@@ -112,119 +138,184 @@
             align-items: center;
             margin-bottom: 20px;
             padding: 0 10px;
+            background-color: #FCF8F3; /* Match body background for header section */
         }
 
         .calendar-header button {
-            background-color: #007bff;
-            color: white;
+            background-color: transparent; /* Transparent button background */
+            color: var(--primary-blue); /* Blue text for buttons */
             border: none;
             padding: 10px 18px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
+            font-size: 1.2em; /* Slightly larger font for buttons */
+            font-weight: bold;
+            transition: color 0.3s ease;
         }
 
         .calendar-header button:hover {
-            background-color: #0056b3;
+            color: var(--accent-orange); /* Orange on hover */
         }
 
         .calendar-header h3 {
             margin: 0;
-            color: #4a6572;
-            font-size: 1.8em;
+            color: var(--primary-blue); /* Blue for month/year display */
+            font-size: 2.5em; /* Larger font size for month/year */
+            font-weight: bold;
         }
 
-        /* カレンダーグリッドのスタイル */
+        /* Calendar Grid Styling */
         #calendar {
             display: grid;
-            grid-template-columns: repeat(7, 1fr); /* 7列のカレンダー */
-            gap: 5px; /* 日付セル間の隙間 */
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px; /* Smaller gap for the grid lines effect */
             margin-top: 15px;
+            border: 1px solid var(--light-grey-border); /* Outer border for the grid */
+            border-radius: var(--cell-border-radius); /* Match cell border radius */
+            overflow: hidden; /* Ensure rounded corners clip children */
         }
 
         .day-of-week {
             text-align: center;
             font-weight: bold;
             padding: 10px 0;
-            background-color: #e9ecef;
-            border-radius: 5px;
+            background-color: var(--off-white); /* Match body background */
+            color: var(--primary-blue); /* Blue for weekdays */
+            border-bottom: 1px solid var(--light-grey-border); /* Bottom border */
+            border-right: 1px solid var(--light-grey-border); /* Right border */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+            font-size: 1.1em;
         }
-        .day-of-week.sunday { color: #dc3545; }
-        .day-of-week.saturday { color: #007bff; }
+        .day-of-week.sunday { color: var(--accent-orange); border-left: none; } /* Orange for Sunday */
+        .day-of-week.saturday { color: var(--primary-blue); border-right: none; } /* Blue for Saturday */
+        .day-of-week:nth-child(7n) { border-right: none; } /* Remove right border for last column */
+        .day-of-week:first-child { border-left: none; } /* Remove left border for first column (Sunday) */
 
 
         .day-cell {
             background-color: #ffffff;
-            border: 1px solid #e0e6e9;
-            border-radius: 8px;
+            border: 1px solid var(--light-grey-border); /* Light grey border for cells */
+            border-radius: 0; /* Remove cell border radius as grid has one */
             padding: 10px;
-            min-height: 100px; /* セルの高さを確保 */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            min-height: 100px;
+            box-shadow: none; /* Remove individual cell shadow */
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* 日付を左上に寄せる */
-            overflow: hidden; /* セルからはみ出る内容を非表示 */
+            align-items: flex-end; /* Align content to the right */
+            overflow: hidden;
+            position: relative; /* For event icons positioning */
+            box-sizing: border-box;
         }
 
-        .day-cell.inactive { /* 前月・次月の日付のスタイル */
-            background-color: #f8f8f8;
-            color: #bbb;
-            opacity: 0.7;
-            pointer-events: none; /* クリック無効化 */
+        .day-cell:nth-child(7n+1) { border-left: none; } /* Remove left border for first column (Sunday) */
+        .day-cell:nth-child(7n) { border-right: none; } /* Remove right border for last column (Saturday) */
+        .day-cell:nth-last-child(-n+7) { border-bottom: none; } /* Remove bottom border for last row */
+        .day-cell:nth-child(1), .day-cell:nth-child(2), .day-cell:nth-child(3),
+        .day-cell:nth-child(4), .day-cell:nth-child(5), .day-cell:nth-child(6),
+        .day-cell:nth-child(7) { border-top: none; } /* Remove top border for first row */
+
+
+        .day-cell.inactive {
+            background-color: #FDF9F5; /* Slightly lighter background for inactive cells */
+            color: #C0BABA; /* Faded color for inactive dates */
+            opacity: 0.9;
+            pointer-events: none;
         }
 
         .day-number {
             font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 5px;
-            align-self: flex-end; /* 日付番号を右寄せ */
+            align-self: flex-end; /* Keep date number to the right */
             width: 100%;
-            text-align: right;
+            text-align: right; /* Ensure number is right aligned */
             padding-right: 5px;
             box-sizing: border-box;
+            color: var(--dark-font); /* Darker color for active day numbers */
+        }
+
+        .day-cell.today .day-number {
+            color: var(--primary-blue); /* Blue for today's date number */
+            position: relative;
+            z-index: 1;
+            /* Optional: Add a subtle highlight behind today's number if desired */
+            /* background-color: rgba(0, 123, 255, 0.1); */
+            /* border-radius: 50%; */
+            /* padding: 2px 6px; */
         }
 
         .day-cell.today {
-            border: 2px solid #007bff;
-            background-color: #eef5ff;
+            border: 2px solid var(--primary-blue); /* Blue border for today */
+            background-color: #F8FCFF; /* Very light blue for today's cell */
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.1); /* Subtle shadow for today */
         }
 
         .event-list {
             list-style: none;
             padding: 0;
             margin: 0;
-            font-size: 0.8em; /* イベント表示を小さく */
+            font-size: var(--event-font-size); /* Use CSS variable */
             width: 100%;
-            flex-grow: 1; /* 残りのスペースを占める */
-            overflow-y: auto; /* イベントが多い場合はスクロール可能に */
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 3px; /* Gap between event items */
         }
 
         .event-list li {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            padding: 4px 6px; /* パディングを小さく */
-            border-radius: 3px; /* 角丸を小さく */
-            margin-bottom: 3px; /* マージンを小さく */
-            white-space: nowrap; /* テキストの折り返しを禁止 */
+            position: relative; /* For flower icon positioning */
+            padding: 4px 6px 4px 20px; /* Adjust padding for icon */
+            border-radius: 3px;
+            margin-bottom: 0; /* Removed margin-bottom as gap handles it */
+            white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* はみ出たら...で表示 */
+            text-overflow: ellipsis;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            font-weight: bold; /* Make event text bold */
+            color: #333; /* Default event text color */
         }
-        .event-list li:hover {
-            background-color: #b8dae0;
-            transform: scale(1.01);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        /* イベントの種類による色分け */
-        .event-list li.interview { background-color: #ffeeba; color: #856404; }
-        .event-list li.briefing { background-color: #c3e6cb; color: #155724; }
-        .event-list li.deadline { background-color: #f8d7da; color: #721c24; }
-        .event-list li.other { background-color: #e2e3e5; color: #383d41; }
-        .event-list li.intern { background-color: #9eb6e6; color: #0468b9; }
 
-        /* モーダルウィンドウのスタイリング */
+        .event-list li::before {
+            content: '🌸'; /* Default flower icon */
+            position: absolute;
+            left: 5px; /* Position of the flower icon */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9em;
+            line-height: 1;
+        }
+
+        /* Event type specific styling for flower icon */
+        .event-list li.interview { background-color: #FFF2F2; color: #D9534F; } /* Light Red */
+        .event-list li.interview::before { color: var(--flower-interview); }
+
+        .event-list li.briefing { background-color: #E6F8E8; color: #5CB85C; } /* Light Green */
+        .event-list li.briefing::before { color: var(--flower-briefing); }
+
+        .event-list li.deadline { background-color: #FFFDEB; color: #F0AD4E; } /* Light Yellow */
+        .event-list li.deadline::before { color: var(--flower-deadline); }
+
+        .event-list li.other { background-color: #EFEFEF; color: #6C757D; } /* Light Grey */
+        .event-list li.other::before { color: var(--flower-other); }
+
+        .event-list li.intern { background-color: #EDF3FB; color: #337AB7; } /* Light Blue */
+        .event-list li.intern::before { color: var(--flower-intern); }
+
+        .event-list li:hover {
+            transform: translateY(-1px); /* Slight lift on hover */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* Keep original hover colors for event list items if desired */
+        .event-list li.interview:hover { background-color: #FCE0E0; }
+        .event-list li.briefing:hover { background-color: #D4F1D7; }
+        .event-list li.deadline:hover { background-color: #FAEAC1; }
+        .event-list li.other:hover { background-color: #E0E0E0; }
+        .event-list li.intern:hover { background-color: #D2E4F6; }
+
+
+        /* Modal Styling - Mostly kept similar, with minor aesthetic tweaks */
         .modal {
             display: none;
             position: fixed;
@@ -234,7 +325,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0,0,0,0.5); /* Slightly darker overlay */
             justify-content: center;
             align-items: center;
         }
@@ -244,7 +335,7 @@
             margin: auto;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4); /* More pronounced shadow */
             width: 90%;
             max-width: 500px;
             box-sizing: border-box;
@@ -256,33 +347,34 @@
             position: absolute;
             top: 10px;
             right: 20px;
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 36px; /* Slightly larger close button */
+            font-weight: lighter; /* Lighter font weight */
             cursor: pointer;
         }
 
         .close-button:hover,
         .close-button:focus {
-            color: black;
+            color: var(--primary-blue); /* Blue on hover */
             text-decoration: none;
-            cursor: pointer;
         }
 
         .modal-content h3 {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            font-size: 2em;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 18px; /* Increased margin */
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px; /* Increased margin */
             font-weight: bold;
             color: #555;
+            font-size: 0.95em;
         }
 
         .form-group input[type="text"],
@@ -291,51 +383,85 @@
         .form-group select,
         .form-group textarea {
             width: calc(100% - 20px);
-            padding: 10px;
+            padding: 12px; /* Increased padding */
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 1em;
+            box-sizing: border-box; /* Ensure padding is included in width */
         }
         .form-group input[type="text"]:focus,
         .form-group input[type="date"]:focus,
         .form-group input[type="time"]:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: #007bff;
+            border-color: var(--light-blue);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3); /* Stronger focus shadow */
         }
 
-        /* 編集モーダルのボタン */
+        /* Edit Modal Buttons */
         #editFormButtons {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px; /* Increased gap */
+            margin-top: 25px; /* Increased margin */
         }
         #editFormButtons button {
             flex: 1;
-            padding: 12px;
+            padding: 14px; /* Increased padding */
             border: none;
             border-radius: 6px;
             font-size: 1.1em;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-weight: bold;
         }
         #editFormButtons #saveEditButton {
-            background-color: #007bff;
+            background-color: var(--primary-blue); /* Use primary blue */
             color: white;
         }
         #editFormButtons #saveEditButton:hover {
-            background-color: #0056b3;
+            background-color: #2F5784; /* Darker shade on hover */
+            transform: translateY(-1px);
         }
         #editFormButtons #deleteEventButton {
-            background-color: #dc3545;
+            background-color: var(--accent-orange); /* Use accent orange */
             color: white;
         }
         #editFormButtons #deleteEventButton:hover {
-            background-color: #c82333;
+            background-color: #D96A45; /* Darker orange on hover */
+            transform: translateY(-1px);
         }
 
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-content-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            .container, #eventDetailsDisplay {
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+            #calendar {
+                font-size: 0.9em; /* Adjust font size for smaller screens */
+            }
+            .day-cell {
+                min-height: 80px; /* Reduce cell height on smaller screens */
+            }
+            .calendar-header h3 {
+                font-size: 2em;
+            }
+            .calendar-header button {
+                padding: 8px 12px;
+                font-size: 1em;
+            }
+            .modal-content {
+                padding: 20px;
+            }
+            .form-group input, .form-group select, .form-group textarea {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -415,7 +541,6 @@
             const detailEventName = document.getElementById('detailEventName');
             const detailEventDate = document.getElementById('detailEventDate');
             const detailEventTime = document.getElementById('detailEventTime');
-            // const detailEventType = document.getElementById('detailEventType'); // ★削除
             const detailEventDetails = document.getElementById('detailEventDetails');
             const detailEventUrl = document.getElementById('detailEventUrl');
             const detailEventUrlContainer = document.getElementById('detailEventUrlContainer');
@@ -430,7 +555,6 @@
             const editEventDateInput = document.getElementById('editEventDate');
             const editStartTimeInput = document.getElementById('editStartTime');
             const editEndTimeInput = document.getElementById('editEndTime');
-            // const editEventTypeSelect = document.getElementById('editEventType'); // ★削除
             const editEventDetailsInput = document.getElementById('editEventDetails');
             const saveEditButton = document.getElementById('saveEditButton');
             const deleteEventButton = document.getElementById('deleteEventButton');
@@ -467,9 +591,9 @@
                 const year = currentDate.getFullYear();
                 const month = currentDate.getMonth(); // 0-11
 
-                currentMonthYearDisplay.textContent = `${year}年 ${month + 1}月`;
+                currentMonthYearDisplay.textContent = `${String(month + 1).padStart(2, '0')} / ${year}`; // Changed format to match image
 
-                const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+                const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']; // Shortened names
 
                 // 曜日ヘッダーを追加
                 dayNames.forEach((dayName, index) => {
@@ -586,7 +710,6 @@
                     }
                     detailEventTime.textContent = timeText;
 
-                    // detailEventType.textContent = typeText; // ★削除
                     detailEventDetails.textContent = eventToShow.details || 'なし';
 
                     if (eventToShow.url) {
@@ -683,6 +806,19 @@
                     allEvents[eventIndex].endTime = newEndTime;
                     allEvents[eventIndex].details = newDetails;
 
+                    // Update event type based on details, similar to script.js logic
+                    let updatedEventType = 'other';
+                    if (newDetails.includes('[企業説明会]')) {
+                        updatedEventType = 'briefing';
+                    } else if (newDetails.includes('[インターン]')) {
+                        updatedEventType = 'intern';
+                    } else if (newDetails.includes('[面接]')) {
+                        updatedEventType = 'interview';
+                    } else if (newDetails.includes('[Web試験]')) {
+                        updatedEventType = 'deadline';
+                    }
+                    allEvents[eventIndex].type = updatedEventType;
+
                     saveAndRebuildEvents();
                     closeEditModal();
                     renderCalendar();
@@ -704,7 +840,7 @@
                     saveAndRebuildEvents();
                     closeEditModal();
                     renderCalendar();
-                    eventDetailsDisplatyle.display = 'none';
+                    eventDetailsDisplay.style.display = 'none'; // Make sure this is correctly spelled
                 } else {
                     console.error('削除対象のイベントが見つかりません。');
                 }
