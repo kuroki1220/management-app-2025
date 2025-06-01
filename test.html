@@ -9,13 +9,25 @@
             font-family: Arial, sans-serif;
             margin: 0; /* ヘッダーを考慮し、bodyのmarginをリセット */
             padding: 20px; /* ヘッダーとの間隔 */
+<<<<<<< Updated upstream
             /* ここから背景画像に関する追加 */
             background-image: url('https://azp2.sakuraweb.com/kakou/aozora/sample1.jpg'); /* ★ここにWeb上の画像URLを貼り付けます */
             background-size: cover; /* 画面全体に画像を広げる */
             background-position: center; /* 画像を中央に配置 */
             background-attachment: fixed; /* スクロールしても画像を固定 */
             color: #333; /* テキストの色を調整すると画像とのコントラストが保てます */
+=======
+            background-color: #f5f5f5;
+>>>>>>> Stashed changes
         }
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px); /* タイトル分を引く */
+}
+
         h2 {
             color: #333;
         }
@@ -32,28 +44,33 @@
         input[type="time"], /* 追加 */
         input[type="url"],
         textarea {
-            width: 300px;
+            width: 500px;
             padding: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid white;
             border-radius: 4px;
         }
         button { /* 登録ボタンのスタイル */
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #072747;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-top: 5px;
         }
         button:hover { /* 登録ボタンのホバー時スタイル */
             background-color: #0056b3;
         }
 
+    .registration {
+margin-left: 200px;
+}
         #tagButtons {
             display: flex; /* 横並びにするために追加 */
             flex-wrap: wrap;
             gap: 9px;
-            margin-bottom: 5px; /* テキストエリアとの間隔調整 */
+            margin-bottom: 5px;
+             /* テキストエリアとの間隔調整 */
         }    
 
         .tag-button { /* タグボタン固有のスタイル */
@@ -65,6 +82,7 @@
             font-size: 14px;
             cursor: pointer;
             transition: background-color 0.2s ease;
+            margin-bottom: 5px;
         }
 
         .tag-button:hover {
@@ -78,7 +96,7 @@
             padding-top: 20px;
         }
         .event-item {
-            background-color: #f9f9f9;
+            background-color: #ccbbbb;
             border: 1px solid #ddd;
             padding: 10px;
             margin-bottom: 10px;
@@ -98,6 +116,7 @@
 </head>
 <body>
     <div id="header-placeholder"></div>
+    <div class="main">
     <main>
         <h2>予定の登録</h2>
         <form id="eventForm">
@@ -133,9 +152,10 @@
                 </div>
                 <textarea id="eventDetails" name="eventDetails" rows="4"></textarea>
             </div>
-            <button type="submit">予定を登録</button>
+            <button type="submit" class="registration">予定を登録</button>
         </form>
     </main>
+    </div>
 
     <script>
         // 共通ヘッダーを読み込むスクリプト
